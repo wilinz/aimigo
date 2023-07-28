@@ -66,6 +66,10 @@ dependencies:
   qr_flutter: ^4.1.0
   get: ^4.6.5
   get_storage: ^2.1.1
+  dart_openai: ^3.0.0
+  http_interceptor: ^1.0.2
+  flutter_math_fork: ^0.7.1
+  markdown_widget: ^2.2.0
 
 
 dev_dependencies:
@@ -89,6 +93,7 @@ flutter:
 
   assets:
     - images/logo.png
+    - images/wilinz.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

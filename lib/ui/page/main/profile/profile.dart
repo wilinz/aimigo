@@ -111,6 +111,16 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ],
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoute.chatPage);
+                        },
+                        child: Text("chat"))),
               )
             ],
           ),
