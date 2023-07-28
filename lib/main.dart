@@ -25,18 +25,16 @@ Future<void> main() async {
   if (!kIsWeb && PlatformUtil.isDesktop()) {
     final padding = 50;
     final screen = await getCurrentScreen();
-    print(screen?.visibleFrame.width);
-    print(screen?.visibleFrame.height);
     final height =
         (screen?.visibleFrame.height ?? 450 + padding * 2) - padding * 2;
     // 必须加上这一行。
     await windowManager.ensureInitialized();
     WindowOptions windowOptions =
-        WindowOptions(size: Size(height * (0.48), height));
+        WindowOptions(size: Size(height * 1.5, height));
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.setMinimizable(true);
-      await windowManager.setAlignment(Alignment.centerRight);
+      await windowManager.setAlignment(Alignment.center);
       await windowManager.setMaximizable(true);
       await windowManager.setResizable(true);
       await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
