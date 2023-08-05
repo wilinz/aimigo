@@ -1,21 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
-import 'package:dart_extensions/dart_extensions.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+
+import 'package:xml/xml.dart';
 
 extension _Uint8ListExtension on Uint8List {
   int indexOfSubList(List list, {int start = 0}) {
@@ -58,6 +48,13 @@ String _numToString(int num) {
 String _buildMessage(String header, String body) =>
     (header + "\n\n" + body).replaceAll("\n", "\r\n");
 
+String escapeXml(String text) {
+  var builder = XmlBuilder();
+  builder.text(text);
+  var node = builder.buildDocument();
+  return node.innerXml;
+}
+
 Stream<Uint8List> tts(String text,
     {required String language,
     required String voiceName,
@@ -92,7 +89,7 @@ Path:ssml""",
       """<speak xmlns:mstts='https://www.w3.org/2001/mstts' version='1.0'
     xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${language}'>
     <voice name='${voiceName}'>
-        <prosody pitch='${_numToString(pitch)}Hz' rate='${_numToString(rate)}%' volume='+0%'>${text}</prosody>
+        <prosody pitch='${_numToString(pitch)}Hz' rate='${_numToString(rate)}%' volume='+0%'>${escapeXml(text)}</prosody>
     </voice>
 </speak>""");
 

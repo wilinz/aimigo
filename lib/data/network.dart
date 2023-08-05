@@ -6,13 +6,14 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http_interceptor/http/http.dart';
-import 'package:http_interceptor/http_interceptor.dart';
+import 'package:flutter_template/data/network_io.dart'
+    if (dart.library.html) 'package:flutter_template/data/network_web.dart';
+import 'package:flutter_template/data/rawhttp.dart';
+import 'package:get/get.dart' as getx;
+import 'package:http_interceptor/http_interceptor.dart' as http_interceptor;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-
-import '../util/openai_key.dart';
 
 extension DioExt on Dio {
   Dio setFollowRedirects(bool followRedirects) {
@@ -26,54 +27,6 @@ extension DioExt on Dio {
     }
     return this;
   }
-}
-
-class HttpCookieInterceptor implements InterceptorContract {
-  final CookieJar cookieJar;
-
-  HttpCookieInterceptor(this.cookieJar);
-
-  @override
-  Future<RequestData> interceptRequest({required RequestData data}) async {
-    print("interceptRequest");
-    final cookies = await cookieJar.loadForRequest(Uri.parse(data.url));
-    final previousCookies = data.headers[HttpHeaders.cookieHeader];
-    final newCookies = getCookies([
-      ...?previousCookies
-          ?.split(';')
-          .where((e) => e.isNotEmpty)
-          .map((c) => Cookie.fromSetCookieValue(c)),
-      ...cookies,
-    ]);
-    if (newCookies.isNotEmpty) {
-      data.headers[HttpHeaders.cookieHeader] = newCookies;
-    }
-
-    return data;
-  }
-
-  static String getCookies(List<Cookie> cookies) {
-    // Sort cookies by path (longer path first).
-    cookies.sort((a, b) {
-      if (a.path == null && b.path == null) {
-        return 0;
-      } else if (a.path == null) {
-        return -1;
-      } else if (b.path == null) {
-        return 1;
-      } else {
-        return b.path!.length.compareTo(a.path!.length);
-      }
-    });
-    return cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
-  }
-
-  @override
-  Future<ResponseData> interceptResponse({required ResponseData data}) async {
-    print(data);
-    return data;
-  }
-
 }
 
 class AppNetwork {
@@ -102,7 +55,13 @@ class AppNetwork {
       validateStatus: (int? status) =>
           status != null && status >= 200 && status < 400,
     );
-    dio.interceptors.add(CookieManager(cookieJar));
+
+    if (!kIsWeb) {
+      dio.interceptors.add(CookieManager(cookieJar));
+    } else {
+      dio.httpClientAdapter = getHttpClientAdapter(withCredentials: true);
+    }
+
     // proxy(dio);
     if (kDebugMode) {
       dio.interceptors.add(PrettyDioLogger(
@@ -120,7 +79,9 @@ class AppNetwork {
 
   static void proxy(Dio dio) {
     if (!kReleaseMode &&
-        (Platform.isWindows || Platform.isMacOS || Platform.isAndroid)) {
+        (getx.GetPlatform.isWindows ||
+            getx.GetPlatform.isMacOS ||
+            getx.GetPlatform.isAndroid)) {
       (dio.httpClientAdapter as dynamic).onHttpClientCreate = (client) {
         client.findProxy = (uri) {
           // 这里设置代理地址和端口号
@@ -141,24 +102,25 @@ class AppNetwork {
   /// 使用重定向拦截器，推荐
   late Dio _dio2;
 
-  late InterceptedClient _rawHttpClient;
+  late http_interceptor.InterceptedClient _rawHttpClient;
 
-  InterceptedClient get rawHttpClient => _rawHttpClient;
+  http_interceptor.InterceptedClient get rawHttpClient => _rawHttpClient;
 
-  static Future<InterceptedClient> getRawHttpClient() async {
+  static Future<http_interceptor.InterceptedClient> getRawHttpClient() async {
     var appNetwork = await getInstance();
     return appNetwork.rawHttpClient;
   }
 
   _initRawHttpClient() {
-    _rawHttpClient = InterceptedClient.build(interceptors: [
-      HttpCookieInterceptor(cookieJar),
+    _rawHttpClient = http_interceptor.InterceptedClient.build(interceptors: [
+      if (!kIsWeb) RawHttpCookieInterceptor(cookieJar),
+      if (kIsWeb) RawHttpWithCredentialsInterceptor()
     ]);
   }
 
   _initOpenAi() {
-    OpenAI.baseUrl = baseUrl;
-    OpenAI.apiKey = generateOpenAiKey(48);
+    OpenAI.baseUrl = baseUrl + "/openai";
+    OpenAI.apiKey = "";
   }
 
   AppNetwork._create();

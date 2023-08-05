@@ -30,7 +30,7 @@ Future<void> main() async {
     // 必须加上这一行。
     await windowManager.ensureInitialized();
     WindowOptions windowOptions =
-        WindowOptions(size: Size(height * 1.5, height));
+        WindowOptions(size: Size(height * 0.5, height));
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.setMinimizable(true);
@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
           return MaterialPageRoute(builder: (context) {
             var routeName = settings.name!;
             AppRoute.currentPage = routeName;
-            if (GetPlatform.isDesktop) {
+            if (GetPlatform.isDesktop && !GetPlatform.isWeb) {
               return Scaffold(
                 appBar: buildWindowTopBar(context, 'app_name'.tr),
                 body: AppRoute.routes[routeName]!
@@ -110,7 +110,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
   }
 
   PreferredSizeWidget buildWindowTopBar(BuildContext context, String title) {
-    if (Platform.isMacOS) {
+    if (GetPlatform.isMacOS) {
       return PreferredSize(
         child: SizedBox(
           height: kWindowCaptionHeight,

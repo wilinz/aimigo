@@ -1,5 +1,5 @@
 final zh_CN = {
-  'app_name': 'Flutter 模板',
+  'app_name': 'Aimigo',
   'hello': '你好',
   'login': '登录',
   'username': '用户名',
@@ -32,8 +32,8 @@ final zh_CN = {
   'theme': '主题',
   'reset_password': '重置密码',
   'resetting_password': '正在重置密码',
-  'successful':'成功',
-  'failed':'失败',
-  'password_login':'密码登录',
-  'verification_code_login':'验证码登录'
+  'successful': '成功',
+  'failed': '失败',
+  'password_login': '密码登录',
+  'verification_code_login': '验证码登录'
 };

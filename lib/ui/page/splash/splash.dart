@@ -29,7 +29,7 @@ class _SplashPageState extends State<SplashPage> {
       height: double.infinity,
       decoration:
           BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-      child: Center(child: Image(image: AssetImage("images/logo.png"))),
+      child: Center(child: Image(image: AssetImage("assets/images/logo.png"))),
     );
   }
 

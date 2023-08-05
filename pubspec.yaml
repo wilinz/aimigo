@@ -56,7 +56,9 @@ dependencies:
   url_launcher: ^6.1.10
   connectivity_plus: ^4.0.1
   rxdart: ^0.27.7
-  dart_extensions: ^2.2.2
+  dart_extensions:
+    git:
+      url: https://github.com/wilinz/dart_extensions.git
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
@@ -66,21 +68,29 @@ dependencies:
   qr_flutter: ^4.1.0
   get: ^4.6.5
   get_storage: ^2.1.1
-  dart_openai: ^3.0.0
-  http_interceptor: ^1.0.2
+  dart_openai: ^4.0.0
+  http_interceptor:
+    git:
+      url: https://github.com/wilinz/http_interceptor.git
   flutter_math_fork: ^0.7.1
   markdown_widget: ^2.2.0
   uuid: ^3.0.7
   audioplayers: ^5.0.0
-
+  xml: ^6.3.0
+  quiver: ^3.2.1
+  carousel_slider: ^4.2.1
+  flutter_staggered_grid_view: ^0.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  get_cli: ^1.8.1
   flutter_lints: ^2.0.0
   build_runner: ^2.3.3
-  json5_model: ^1.0.1
+  json5_model:
+    git:
+      url: https://github.com/wilinz/json5_model.git
   json_serializable: ^6.5.4
   msix: ^3.7.0
   floor_generator: ^1.4.0
@@ -94,8 +104,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/logo.png
-    - images/wilinz.jpg
+    - assets/images/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

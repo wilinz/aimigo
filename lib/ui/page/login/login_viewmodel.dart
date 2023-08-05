@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/data/model/account/login_response.dart';
 import 'package:flutter_template/data/network.dart';
 import 'package:flutter_template/util/md5.dart';
 import 'package:dio/src/response.dart' as dio_response;
 import 'package:get/get.dart';
 import 'package:kt_dart/kt.dart';
 
+import '../../../data/model/account/login_response/login_response.dart';
 import '../../../data/model/user/user.dart';
 import '../../../data/repository/user.dart';
 import '../../route.dart';

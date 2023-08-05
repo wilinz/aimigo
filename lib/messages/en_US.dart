@@ -1,5 +1,5 @@
 final en_US = {
-  'app_name':'Flutter Template',
+  'app_name':'Aimigo',
   'hello': 'Hello',
   'login': 'Login',
   'username': 'Username',

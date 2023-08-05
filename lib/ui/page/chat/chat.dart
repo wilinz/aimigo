@@ -18,10 +18,10 @@ import '../../../data/tts/tts.dart';
 import '../../widget/latex.dart';
 
 class MyMarkdownController extends GetxController {
-  final OpenAIChatCompletionChoiceMessageModel message;
+  late OpenAIChatCompletionChoiceMessageModel message;
   var isSourceMode = false.obs;
 
-  MyMarkdownController(this.message);
+  MyMarkdownController({required this.message});
 
   Future<void> textToSpeech() async {
     final supportDir = await getApplicationSupportDirectory();
@@ -39,22 +39,36 @@ class MyMarkdownController extends GetxController {
     }, onDone: () async {
       sink.close();
       final player = AudioPlayer();
-      await player.play(DeviceFileSource(file.path));
-      file.delete();
+      player.play(DeviceFileSource(file.path));
+      player.onPlayerComplete.listen((event) {
+        file.delete();
+      });
     });
   }
 }
 
-class MyMarkdownWidget extends StatelessWidget {
-  late final MyMarkdownController c;
+class MyMarkdownWidget extends StatefulWidget {
   final OpenAIChatCompletionChoiceMessageModel message;
 
-  MyMarkdownWidget(this.message, {Key? key}) : super(key: key) {
-    c = MyMarkdownController(message);
+  MyMarkdownWidget(this.message, {Key? key}) : super(key: key) {}
+
+  @override
+  State<MyMarkdownWidget> createState() => _MyMarkdownWidgetState();
+}
+
+class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
+  late final MyMarkdownController c;
+
+  @override
+  void initState() {
+    super.initState();
+    c = Get.put(MyMarkdownController(message: widget.message),
+        tag: this.hashCode.toString());
   }
 
   @override
   Widget build(BuildContext context) {
+    c.message = widget.message;
     final config = Get.isDarkMode
         ? MarkdownConfig.darkConfig
         : MarkdownConfig.defaultConfig;
@@ -63,7 +77,8 @@ class MyMarkdownWidget extends StatelessWidget {
 
     return Obx(() {
       return MyMarkdownBlock(
-        data: message.content.isNotEmpty ? message.content : "...",
+        data:
+            widget.message.content.isNotEmpty ? widget.message.content : "...",
         isSourceMode: c.isSourceMode.value,
         builder: (child) {
           return SelectionArea(
@@ -135,6 +150,12 @@ class MyMarkdownWidget extends StatelessWidget {
       ),
     ),
   );
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete(tag: this.hashCode.toString());
+  }
 }
 
 class ChatPage extends StatelessWidget {
@@ -205,7 +226,7 @@ class ChatPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: SizedBox.square(
                                   dimension: 48,
-                                  child: Image.asset("images/wilinz.jpg"),
+                                  child: Image.asset("assets/images/wilinz.jpg"),
                                 ),
                               ),
                             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_template/ui/page/chat/chat.dart';
+import 'package:flutter_template/ui/page/image_details_page/image_details_page.dart';
 import 'package:flutter_template/ui/page/regiester/register.dart';
 import 'package:flutter_template/ui/page/reset_password/reset_password.dart';
 import 'package:flutter_template/ui/page/settings/settings_page.dart';
@@ -28,6 +29,8 @@ class AppRoute {
 
   static const String chatPage = "/ChatPage";
 
+  static const String imageDetailsPage = "/ImageDetailsPage";
+
   ///路由表配置
   static Map<String, Widget Function(BuildContext context, dynamic arguments)>
       routes = {
@@ -47,5 +50,6 @@ class AppRoute {
     resetPasswordPage: (context, arguments) =>
         ResetPasswordPage(username: arguments['username'] ?? ""),
     chatPage: (context, arguments) => ChatPage(),
+    imageDetailsPage: (context, arguments) => ImageDetailsPage(data: arguments),
   };
 }

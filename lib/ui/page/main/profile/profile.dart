@@ -59,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage>
                       child: Row(
                         children: [
                           Image(
-                            image: AssetImage("images/logo.png"),
+                            image: AssetImage("assets/images/logo.png"),
                             width: 48,
                             height: 48,
                             fit: BoxFit.contain,
@@ -82,49 +82,68 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Center(
-                      child: Text.rich(
-                        TextSpan(children: [
-                          TextSpan(text: "一个 Flutter App 模板，可以让你快速开发 App\n"),
-                          TextSpan(
-                              text:
-                                  "https://github.com/wilinz/flutter_template",
-                              style: TextStyle(
-                                color: Colors.blue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  launcher.launchUrl(
-                                      Uri.parse(
-                                          "https://github.com/wilinz/flutter_template"),
-                                      mode: LaunchMode.externalApplication);
-                                })
+                padding: const EdgeInsets.all(12.0),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          buildItem(
+                              text: "Ai聊天",
+                              onPressed: () {
+                                Get.toNamed(AppRoute.chatPage);
+                              }),
+                          buildItem(
+                              text: "Ai绘画",
+                              onPressed: () {
+                                Get.snackbar("施工中", "正在施工中");
+                                // Get.to(AppRoute.chatPage);
+                              }),
                         ]),
-                      ),
+                        Row(
+                          children: [
+                            buildItem(
+                                text: "Ai翻译",
+                                onPressed: () {
+                                  Get.snackbar("施工中", "正在施工中");
+                                  // Get.to(AppRoute.chatPage);
+                                }),
+                            buildItem(
+                                text: "Ai语音",
+                                onPressed: () {
+                                  Get.snackbar("施工中", "正在施工中");
+                                  // Get.to(AppRoute.chatPage);
+                                })
+                          ],
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoute.chatPage);
-                        },
-                        child: Text("chat"))),
-              )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Expanded buildItem({required String text, required VoidCallback? onPressed}) {
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+        height: 50,
+        child: TextButton(
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+            onPressed: onPressed,
+            child: Text(text)),
       ),
     );
   }
