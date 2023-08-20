@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aimigo/ui/page/ai_painting/sd_model/sd_model_page.dart';
+import 'package:aimigo/ui/page/chat/chat.dart';
 import 'package:get/get.dart';
 
 import 'home/home.dart';
@@ -28,7 +30,8 @@ class _MainPageState extends State<_MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: PageView(
-          children: [HomePage(), ProfilePage()],
+          physics: NeverScrollableScrollPhysics(),
+          children: [HomePage(), SDModelPage(), ChatPage(), ProfilePage()],
           onPageChanged: (index) {
             setState(() {
               selected = index;
@@ -45,6 +48,18 @@ class _MainPageState extends State<_MainPage> {
                 selectedIcon: Icon(Icons.home),
               ),
               NavigationDestination(
+                tooltip: 'Ai绘图',
+                icon: Icon(Icons.brush_outlined),
+                label: 'Ai绘图',
+                selectedIcon: Icon(Icons.brush),
+              ),
+              NavigationDestination(
+                tooltip: 'Ai聊天',
+                icon: Icon(Icons.chat_outlined),
+                label: 'Ai聊天',
+                selectedIcon: Icon(Icons.chat),
+              ),
+              NavigationDestination(
                 tooltip: 'my'.tr,
                 icon: Icon(Icons.person_outlined),
                 label: 'my'.tr,
@@ -52,8 +67,9 @@ class _MainPageState extends State<_MainPage> {
               )
             ],
             onDestinationSelected: (index) {
-              pageController.animateToPage(index,
-                  duration: Duration(milliseconds: 200), curve: Curves.linear);
+              // pageController.animateToPage(index,
+              //     duration: Duration(milliseconds: 200), curve: Curves.linear);
+              pageController.jumpToPage(index);
             },
             selectedIndex: selected));
   }

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/data/network.dart';
-import 'package:flutter_template/util/md5.dart';
+import 'package:aimigo/data/network.dart';
+import 'package:aimigo/util/md5.dart';
 import 'package:dio/src/response.dart' as dio_response;
 import 'package:get/get.dart';
 import 'package:kt_dart/kt.dart';
@@ -30,7 +30,7 @@ class LoginController extends GetxController {
   Future<void> login(
       FormState currentState, String username, String password) async {
     if (!currentState.validate()) {
-      Get.rawSnackbar(message: "请检查输入");
+      Get.snackbar("出错了", "请检查输入");
       return;
     }
     final dio = await AppNetwork.getDio();
@@ -49,18 +49,14 @@ class LoginController extends GetxController {
 
       final loginResult = LoginResponse.fromJson(resp.data);
       if (loginResult.code == 200) {
-        Get.rawSnackbar(message: "登录成功");
+        Get.snackbar("成功", "登录成功");
         Get.offNamed(AppRoute.mainPage);
-        // if (widget.popUpAfterSuccess) {
-        //   Navigator.pop(context);
-        // } else {
-        //   Navigator.pushNamed(context, AppRoute.mainPage);
-        // }
+        UserRepository.getInstance().login(username);
       } else {
-        Get.rawSnackbar(message: "登录失败: ${loginResult.msg}");
+        Get.snackbar("出错了", "登录失败: ${loginResult.msg}");
       }
     } catch (e) {
-      Get.rawSnackbar(message: "登录失败: ${e}");
+      Get.snackbar("出错了", "登录失败: ${e}");
       print(e);
     }
   }
@@ -80,7 +76,7 @@ class LoginController extends GetxController {
 
   sendCode(String email) async {
     if (usernameController.text.trim().isEmpty) {
-      Get.rawSnackbar(message: "please_enter_your_email_address_first".tr);
+      Get.snackbar("出错了", "please_enter_your_email_address_first".tr);
       return;
     }
 
@@ -91,7 +87,7 @@ class LoginController extends GetxController {
         data: {"codeType": "login", "graphicCode": "", "phoneOrEmail": email});
     final respBody = resp.data;
     if (respBody['code'] == 200) {
-      Get.rawSnackbar(message: "verification_code_sent_successfully".tr);
+      Get.snackbar("出错了", "verification_code_sent_successfully".tr);
       // 启动倒计时
       const countdownDuration = 60; // 倒计时时长
 
@@ -104,8 +100,7 @@ class LoginController extends GetxController {
         }
       });
     } else {
-      Get.rawSnackbar(
-          message: "${'verification_code_sent_failed'.tr}：${respBody['msg']}");
+      Get.snackbar("出错了","${'verification_code_sent_failed'.tr}：${respBody['msg']}");
     }
 
     isGettingVerificationCode.value = false;

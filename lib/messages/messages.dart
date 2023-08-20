@@ -1,5 +1,5 @@
-import 'package:flutter_template/messages/en_US.dart';
-import 'package:flutter_template/messages/zh_CN.dart';
+import 'package:aimigo/messages/en_US.dart';
+import 'package:aimigo/messages/zh_CN.dart';
 import 'package:get/get.dart';
 
 class Messages extends Translations {

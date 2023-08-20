@@ -5,10 +5,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_template/data/get_storage.dart';
-import 'package:flutter_template/ui/color_schemes.g.dart';
-import 'package:flutter_template/messages/messages.dart';
-import 'package:flutter_template/ui/page/settings/settings_controller.dart';
+import 'package:aimigo/data/database/database.dart';
+import 'package:aimigo/data/get_storage.dart';
+import 'package:aimigo/data/network.dart';
+import 'package:aimigo/package_info.dart';
+import 'package:aimigo/ui/color_schemes.g.dart';
+import 'package:aimigo/messages/messages.dart';
+import 'package:aimigo/ui/page/settings/settings_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -22,6 +25,17 @@ import 'util/platform.dart';
 Future<void> main() async {
   //确保组件树初始化
   WidgetsFlutterBinding.ensureInitialized();
+  await Future.wait([
+    initDatabase(),
+    initDesktopWindows(),
+    initGetStorage(),
+    initPackageInfo(),
+    AppNetwork.init()
+  ]);
+  runApp(const MyApp());
+}
+
+Future<void> initDesktopWindows() async {
   if (!kIsWeb && PlatformUtil.isDesktop()) {
     final padding = 50;
     final screen = await getCurrentScreen();
@@ -47,9 +61,6 @@ Future<void> main() async {
       await windowManager.focus();
     });
   }
-
-  await initGetStorage();
-  runApp(const MyApp());
 }
 
 showSnackBar(BuildContext context, String msg, {int milliseconds = 2000}) {
@@ -80,53 +91,37 @@ class _MyAppState extends State<MyApp> with WindowListener {
     }
 
     return GetMaterialApp(
-        title: 'app_name'.tr,
-        translations: Messages(),
-        // locale: Locale('en', 'US'),
-        locale: settings.locale.value ?? Get.deviceLocale,
-        fallbackLocale: Locale('zh', 'CN'),
-        theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-        themeMode: settings.themeMode.value,
-        // routes: AppRoute.routes,
-        debugShowCheckedModeBanner: false,
-        navigatorKey: AppRoute.navigatorKey,
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(builder: (context) {
-            var routeName = settings.name!;
-            AppRoute.currentPage = routeName;
-            if (GetPlatform.isDesktop && !GetPlatform.isWeb) {
-              return Scaffold(
-                appBar: buildWindowTopBar(context, 'app_name'.tr),
-                body: AppRoute.routes[routeName]!
-                    .call(context, settings.arguments),
-              );
-            } else {
-              return AppRoute.routes[routeName]!
-                  .call(context, settings.arguments);
-            }
-          });
-        });
-  }
-
-  PreferredSizeWidget buildWindowTopBar(BuildContext context, String title) {
-    if (GetPlatform.isMacOS) {
-      return PreferredSize(
-        child: SizedBox(
-          height: kWindowCaptionHeight,
-          child: Center(child: Text(title)),
-        ),
-        preferredSize: const Size.fromHeight(kWindowCaptionHeight),
-      );
-    } else {
-      return PreferredSize(
-        child: WindowCaption(
-          brightness: Theme.of(context).brightness,
-          title: Text(title),
-        ),
-        preferredSize: const Size.fromHeight(kWindowCaptionHeight),
-      );
-    }
+      title: 'app_name'.tr,
+      translations: Messages(),
+      defaultTransition: Transition.cupertino,
+      // 转场动画
+      // locale: Locale('en', 'US'),
+      locale: settings.locale.value ?? Get.deviceLocale,
+      fallbackLocale: Locale('zh', 'CN'),
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+      themeMode: settings.themeMode.value,
+      // routes: AppRoute.routes,
+      debugShowCheckedModeBanner: false,
+      navigatorKey: AppRoute.navigatorKey,
+      getPages: AppRoute.routes,
+      // onGenerateRoute: (RouteSettings settings) {
+      //   return MaterialPageRoute(builder: (context) {
+      //     var routeName = settings.name!;
+      //     AppRoute.currentPage = routeName;
+      //     if (GetPlatform.isDesktop && !GetPlatform.isWeb) {
+      //       return Scaffold(
+      //         appBar: buildWindowTopBar(context, 'app_name'.tr),
+      //         body: AppRoute.routes[routeName]!
+      //             .call(context, settings.arguments),
+      //       );
+      //     } else {
+      //       return AppRoute.routes[routeName]!
+      //           .call(context, settings.arguments);
+      //     }
+      //   });
+      // }
+    );
   }
 
   @override

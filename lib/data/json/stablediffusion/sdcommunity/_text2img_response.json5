@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "generationTime": 14.079592943191528,
+  "id": 13441520,
+  "output": [
+    "https://pub-8b49af329fae499aa563997f5d4068a4.r2.dev/generations/4118bb93-2c49-4d1d-9837-f43a0801e42e-0.png"
+  ],
+  "meta": {
+    "prompt": "mdjrny-v4 style actual 8K portrait photo of gareth person, portrait, happy colors, bright eyes, clear eyes, warm smile, smooth soft skin, big dreamy eyes, beautiful intricate colored hair, symmetrical, anime wide eyes, soft lighting, detailed face, by makoto shinkai, stanley artgerm lau, wlop, rossdraws, concept art, digital painting, looking into camera DSLR photography, sharp focus, Unreal Engine 5, Octane Render, Redshift, ((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame",
+    "model_id": "midjourney",
+    "negative_prompt": "painting, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, deformed, ugly, blurry, bad anatomy, bad proportions, extra limbs, cloned face, skinny, glitchy, double torso, extra arms, extra hands, mangled fingers, missing lips, ugly face, distorted face, extra legs, anime ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((naked)), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, glitchy, ((extra breasts)), ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), ((missing breasts)), (missing lips), ((ugly face)), ((fat)), ((extra legs))",
+    "scheduler": "DDPMScheduler",
+    "safetychecker": "no",
+    "W": 512,
+    "H": 512,
+    "guidance_scale": 7.5,
+    "seed": 3292243727,
+    "steps": 20,
+    "n_samples": 1,
+    "full_url": "no",
+    "upscale": "no",
+    "multi_lingual": "no",
+    "panorama": "no",
+    "self_attention": "no",
+    "embeddings": null,
+    "lora": null,
+    "outdir": "out",
+    "file_prefix": "4118bb93-2c49-4d1d-9837-f43a0801e42e"
+  }
+}

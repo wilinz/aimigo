@@ -6,7 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 
-import 'package:flutter_template/data/tts/tts.dart';
+import 'package:aimigo/data/tts/tts.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Future<void> main() async {

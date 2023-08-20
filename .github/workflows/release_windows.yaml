@@ -35,17 +35,17 @@ jobs:
       - name: Upload to artifact
         uses: actions/upload-artifact@v3
         with:
-          name: flutter_template.exe
-          path: innosetup/output/release/flutter_template.exe
+          name: aimigo.exe
+          path: innosetup/output/release/aimigo.exe
 
       - name: Package as zip
         run: |
           cd build/windows/runner/Release
-          zip -q -r ../flutter_template_windows.zip ./*
+          zip -q -r ../aimigo_windows.zip ./*
           cd ../../../../
 
       - name: Upload to artifact
         uses: actions/upload-artifact@v3
         with:
-          name: flutter_template_windows.zip
-          path: build/windows/runner/flutter_template_windows.zip
+          name: aimigo_windows.zip
+          path: build/windows/runner/aimigo_windows.zip

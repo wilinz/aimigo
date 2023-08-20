@@ -1,4 +1,4 @@
-# flutter_template 一个 Flutter App 模板，可以让你快速开发 App
+# aimigo 一个 Flutter App 模板，可以让你快速开发 App
 
 ## 下面是一些常用命令
 

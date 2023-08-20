@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/data/network.dart';
+import 'package:aimigo/data/network.dart';
 import 'package:get/get.dart';
 
 
@@ -33,7 +33,7 @@ class RegisterController extends GetxController {
   Future<void> register() async {
     final currentState = formKey.currentState as FormState;
     if (!currentState.validate()) {
-      Get.rawSnackbar(message: "please_check_the_input".tr);
+      Get.snackbar("出错了", "please_check_the_input".tr);
       return;
     }
     final dio = await AppNetwork.getDio();
@@ -48,21 +48,20 @@ class RegisterController extends GetxController {
           });
       final result = resp.data;
       if (result['code'] == 200) {
-        Get.rawSnackbar(message: "registration_successful".tr);
+        Get.snackbar("成功", "registration_successful".tr);
         Navigator.pop(Get.context!);
       } else {
-        Get.rawSnackbar(
-            message: "${'registration_failed'.tr}: ${result['msg']}");
+        Get.snackbar("出错了","${'registration_failed'.tr}: ${result['msg']}");
       }
     } catch (e) {
-      Get.rawSnackbar(message: "${'registration_failed'.tr}: ${e}");
+      Get.snackbar("出错了", "${'registration_failed'.tr}: ${e}");
       print(e);
     }
   }
 
   sendCode(String email) async {
     if (usernameController.text.trim().isEmpty) {
-      Get.rawSnackbar(message: "please_enter_your_email_address_first".tr);
+      Get.snackbar("出错了", "please_enter_your_email_address_first".tr);
       return;
     }
 
@@ -73,7 +72,7 @@ class RegisterController extends GetxController {
         data: {"codeType": "register", "graphicCode": "", "phoneOrEmail": email});
     final respBody = resp.data;
     if (respBody['code'] == 200) {
-      Get.rawSnackbar(message: "verification_code_sent_successfully".tr);
+      Get.snackbar("出错了", "verification_code_sent_successfully".tr);
       // 启动倒计时
       const countdownDuration = 60; // 倒计时时长
 
@@ -86,8 +85,7 @@ class RegisterController extends GetxController {
         }
       });
     } else {
-      Get.rawSnackbar(
-          message: "${'verification_code_sent_failed'.tr}：${respBody['msg']}");
+      Get.snackbar("出错了", "${'verification_code_sent_failed'.tr}：${respBody['msg']}");
     }
 
     isGettingVerificationCode.value = false;

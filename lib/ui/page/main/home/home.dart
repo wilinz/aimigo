@@ -2,8 +2,8 @@ import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/ui/page/main/home/home_controller.dart';
-import 'package:flutter_template/ui/route.dart';
+import 'package:aimigo/ui/page/main/home/home_controller.dart';
+import 'package:aimigo/ui/route.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';

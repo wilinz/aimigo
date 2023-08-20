@@ -1,4 +1,4 @@
-package com.wilinz.flutter_template
+package com.wilinz.aimigo
 
 import io.flutter.embedding.android.FlutterActivity
 

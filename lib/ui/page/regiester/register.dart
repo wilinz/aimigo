@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/ui/page/regiester/register_viewmodel.dart';
+import 'package:aimigo/ui/page/regiester/register_viewmodel.dart';
 import 'package:get/get.dart';
 
 class RegisterPage extends StatelessWidget {

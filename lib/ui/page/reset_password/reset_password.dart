@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/ui/page/regiester/register_viewmodel.dart';
-import 'package:flutter_template/ui/page/reset_password/reset_password_controller.dart';
+import 'package:aimigo/ui/page/regiester/register_viewmodel.dart';
+import 'package:aimigo/ui/page/reset_password/reset_password_controller.dart';
 import 'package:get/get.dart';
 
 class ResetPasswordPage extends StatelessWidget {

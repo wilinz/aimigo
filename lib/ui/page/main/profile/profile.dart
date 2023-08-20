@@ -1,7 +1,13 @@
+import 'package:dart_extensions/dart_extensions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/ui/page/settings/settings_page.dart';
+import 'package:aimigo/check_update.dart';
+import 'package:aimigo/package_info.dart';
+import 'package:aimigo/ui/page/main/profile/profile_vm.dart';
+import 'package:aimigo/ui/page/settings/settings_page.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -19,6 +25,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final c = Get.put(ProfileController());
     return Scaffold(
       appBar: AppBar(
         title: Text("profile".tr),
@@ -70,9 +77,17 @@ class _ProfilePageState extends State<ProfilePage>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(("first name") + (" second name")),
-                              SizedBox(height: 4),
-                              Text("info"),
+                              StreamBuilder(
+                                  stream: c.getActiveUserStream(),
+                                  builder: (context, item) {
+                                    final user = item.data;
+                                    return Text(
+                                      user == null ? "请登录" : user.username,
+                                      style: Get.theme.textTheme.titleMedium,
+                                    );
+                                  }),
+                              // SizedBox(height: 4),
+                              // Text("info"),
                             ],
                           )
                         ],
@@ -81,47 +96,48 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Row(children: [
-                          buildItem(
-                              text: "Ai聊天",
-                              onPressed: () {
-                                Get.toNamed(AppRoute.chatPage);
-                              }),
-                          buildItem(
-                              text: "Ai绘画",
-                              onPressed: () {
-                                Get.snackbar("施工中", "正在施工中");
-                                // Get.to(AppRoute.chatPage);
-                              }),
-                        ]),
-                        Row(
-                          children: [
-                            buildItem(
-                                text: "Ai翻译",
-                                onPressed: () {
-                                  Get.snackbar("施工中", "正在施工中");
-                                  // Get.to(AppRoute.chatPage);
-                                }),
-                            buildItem(
-                                text: "Ai语音",
-                                onPressed: () {
-                                  Get.snackbar("施工中", "正在施工中");
-                                  // Get.to(AppRoute.chatPage);
-                                })
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+              SizedBox(height: 8),
+              ListTile(
+                onTap: () {
+                  logout(c);
+                },
+                leading: Icon(Icons.logout_outlined),
+                title: Text("退出登录"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
               ),
+              ListTile(
+                onTap: () {},
+                leading: Icon(Icons.person_outline),
+                title: Text("关于"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              ),
+              ListTile(
+                onTap: () async {
+                  if (kIsWeb) return;
+                  await c.checkUpdate();
+                  final appVersion = c.appVersion.value;
+                  if (appVersion != null &&
+                      appVersion.isHasNewVersion(packageInfo)) {
+                    showDialog(
+                        context: Get.context!,
+                        barrierDismissible: !appVersion.isForce,
+                        builder: (context) =>
+                            UpdateDialog(appVersion: appVersion));
+                  } else {
+                    Get.snackbar("版本信息", "已经最新版本");
+                  }
+                },
+                leading: Icon(Icons.info_outline),
+                title: Obx(() {
+                  final appVersion = c.appVersion.value;
+                  if (appVersion != null &&
+                      appVersion.isHasNewVersion(packageInfo)) {
+                    return Text("版本：${packageInfo.version} -> ${appVersion.versionName}");
+                  }
+                  return Text("版本：${packageInfo.version ?? ""}");
+                }),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              )
             ],
           ),
         ),
@@ -155,4 +171,28 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   bool get wantKeepAlive => true;
+
+  void logout(ProfileController c) {
+    showDialog(
+        context: Get.context!,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("确定"),
+            content: Text("确定退出登录？"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("取消")),
+              TextButton(
+                  onPressed: () async {
+                    await c.logout();
+                    Navigator.pop(context);
+                  },
+                  child: Text("确定"))
+            ],
+          );
+        });
+  }
 }

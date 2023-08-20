@@ -13,9 +13,7 @@ part 'database.g.dart'; // the generated code will be there
 @TypeConverters([DateTimeConverter, DateTimeNullableConverter])
 @Database(version: 1, entities: [User])
 abstract class AppDatabase extends FloorDatabase {
-
   UserDao get userDao;
-
 }
 
 // 以下是OnConflictStrategy枚举中可用的选项：
@@ -26,9 +24,14 @@ abstract class AppDatabase extends FloorDatabase {
 // OnConflictStrategy.ignore: 忽略冲突并继续执行操作，不会抛出异常或撤销操作。
 // OnConflictStrategy.replace: 替换现有记录的值，并继续执行操作，不会抛出异常或撤销操作。
 
-AppDatabase? _database;
+late AppDatabase appDatabase;
 
-Future<AppDatabase> getDatabase() async => _database ??= await _getDatabase();
+Future<AppDatabase> getDatabase() async => appDatabase;
+
+late Database db;
+
+Future<void> initDatabase() async => appDatabase = await _getDatabase();
+
 
 Future<AppDatabase> _getDatabase() async {
   final dir = await getApplicationSupportDirectory();

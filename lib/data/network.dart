@@ -6,9 +6,9 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_template/data/network_io.dart'
-    if (dart.library.html) 'package:flutter_template/data/network_web.dart';
-import 'package:flutter_template/data/rawhttp.dart';
+import 'package:aimigo/data/network_io.dart'
+    if (dart.library.html) 'package:aimigo/data/network_web.dart';
+import 'package:aimigo/data/rawhttp.dart';
 import 'package:get/get.dart' as getx;
 import 'package:http_interceptor/http_interceptor.dart' as http_interceptor;
 import 'package:path/path.dart';
@@ -30,7 +30,9 @@ extension DioExt on Dio {
 }
 
 class AppNetwork {
-  static const String baseUrl = "https://hk.wilinz.com:8090";
+  static const String baseUrl = "https://aimigo.wilinz.com";
+
+  // static const String baseUrl = "https://192.168.1.5:10010";
   static const String typeUrlEncode = "application/x-www-form-urlencoded";
   static const String userAgent =
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36";
@@ -140,6 +142,12 @@ class AppNetwork {
   Dio get redirect2Dio => _dio2;
 
   late CookieJar cookieJar;
+
+  factory AppNetwork.get() => _instance!;
+
+  static Future<void> init() async {
+    getInstance();
+  }
 
   static Future<AppNetwork> getInstance() async {
     if (_instance == null) {

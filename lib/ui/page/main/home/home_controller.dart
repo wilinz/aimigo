@@ -1,5 +1,5 @@
 import 'package:dart_openai/dart_openai.dart';
-import 'package:flutter_template/data/network.dart';
+import 'package:aimigo/data/network.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {

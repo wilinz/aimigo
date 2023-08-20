@@ -6,9 +6,11 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_template/data/network.dart';
-import 'package:flutter_template/ui/widget/code_wrapper.dart';
-import 'package:flutter_template/ui/widget/markdown_block.dart';
+import 'package:aimigo/data/network.dart';
+import 'package:aimigo/ui/page/common.dart';
+import 'package:aimigo/ui/widget/code_wrapper.dart';
+import 'package:aimigo/ui/widget/markdown_block.dart';
+import 'package:aimigo/ui/widget/selection_transformer.dart';
 import 'package:get/get.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:path/path.dart';
@@ -82,9 +84,11 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
         isSourceMode: c.isSourceMode.value,
         builder: (child) {
           return SelectionArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: child,
+            child: SelectionTransformer.separated(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: child,
+              )
             ),
             contextMenuBuilder: (context, editableTextState) {
               final TextEditingValue value = editableTextState.textEditingValue;
@@ -158,7 +162,12 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
   }
 }
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin {
   final ChatController c = Get.put(ChatController());
 
   @override
@@ -287,10 +296,10 @@ class ChatPage extends StatelessWidget {
   void _sendMessage(SendMessageIntent intent) {
     c.sendMessages();
   }
-}
 
-class SendMessageIntent extends Intent {
-  const SendMessageIntent();
+  @override
+  bool get wantKeepAlive => true;
+
 }
 
 class ChatController extends GetxController {
@@ -317,22 +326,32 @@ class ChatController extends GetxController {
   }
 
   void _scrollToBottom() {
-    scrollController.jumpTo(
-      scrollController.position.maxScrollExtent,
-      // duration: Duration(milliseconds: 10),
-      // curve: Curves.easeInOut,
-    );
+    try {
+      scrollController.jumpTo(
+            scrollController.position.maxScrollExtent,
+            // duration: Duration(milliseconds: 10),
+            // curve: Curves.easeInOut,
+          );
+    } catch (e) {
+      print(e);
+    }
   }
 
   void sendMessages() async {
     try {
+      //获取消息
       final msg = inputController.text;
+      //清空输入
       inputController.text = "";
+      //构建用户消息
       final message0 = OpenAIChatCompletionChoiceMessageModel(
           role: OpenAIChatMessageRole.user, content: msg);
+      //将消息加入消息列表
       messages.value.add(message0);
+      //滚到列表底部
       _scrollToBottom();
 
+      //调用 createStream
       final client = await AppNetwork.getRawHttpClient();
       Stream<OpenAIStreamChatCompletionModel> chatStream = OpenAI.instance.chat
           .createStream(
@@ -340,19 +359,28 @@ class ChatController extends GetxController {
               messages: messages.value,
               client: client);
 
+      //构建响应消息
       final message = OpenAIChatCompletionChoiceMessageModel(
           role: OpenAIChatMessageRole.assistant, content: "");
+      //将消息加入消息列表
       messages.value.add(message);
+      //获取消息 index
       final index = messages.value.indexOf(message);
 
+      //监听响应
       chatStream.listen(
           (streamChatCompletion) {
             try {
+              //获取响应内容
               final content = streamChatCompletion.choices.first.delta.content;
+              //获取旧消息
               final old = messages.value[index];
+              //更新消息
               messages.value[index] = OpenAIChatCompletionChoiceMessageModel(
                   role: OpenAIChatMessageRole.assistant,
+                  //追加拼接内容
                   content: old.content + (content ?? ""));
+              //滚到列表底部
               _scrollToBottom();
             } catch (e) {
               print(e);

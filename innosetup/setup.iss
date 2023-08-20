@@ -4,8 +4,8 @@
 #define MyAppName "Flutter Template"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "wilinz"
-#define MyAppURL "https://github.com/wilinz/flutter_template"
-#define MyAppExeName "flutter_template.exe"
+#define MyAppURL "https://github.com/wilinz/aimigo"
+#define MyAppExeName "aimigo.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
@@ -21,12 +21,12 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\flutter_template
+DefaultDirName={autopf}\aimigo
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename=flutter_template
+OutputBaseFilename=aimigo
 SetupIconFile=./icon/icon.ico
 OutputDir=./output/release
 Compression=lzma

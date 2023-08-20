@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:aimigo/ui/widget/selection_transformer.dart';
 
 class CodeWrapperWidget extends StatefulWidget {
   final Widget child;
@@ -26,7 +27,7 @@ class _PreWrapperState extends State<CodeWrapperWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        widget.child,
+        SelectionArea(child: SelectionTransformer.separated(child: widget.child)),
         Align(
           child: Container(
             padding: const EdgeInsets.all(16.0),

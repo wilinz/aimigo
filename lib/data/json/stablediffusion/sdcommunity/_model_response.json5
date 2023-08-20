@@ -1,0 +1,29 @@
+[
+  {
+    "model_id": "midjourney",
+    "status": "model_ready",
+    "created_at": null,
+    "instance_prompt": "mdjrny-v4 style",
+    "model_name": "MidJourney V4",
+    "description": "Openjourney is an open source Stable Diffusion fine tuned model on Midjourney images, by PromptHero",
+    "screenshots": "https://d1okzptojspljx.cloudfront.net/generations/14853540911669470514.png"
+  },
+  {
+    "model_id": "anything-v3",
+    "status": "model_ready",
+    "created_at": null,
+    "instance_prompt": null,
+    "model_name": "Anything V3",
+    "description": "This model is intended to produce high-quality, highly detailed anime style with just a few prompts.",
+    "screenshots": "https://d1okzptojspljx.cloudfront.net/generations/8589140601669473451.png"
+  },
+  {
+    "model_id": "wifu-diffusion",
+    "status": "model_ready",
+    "created_at": null,
+    "instance_prompt": null,
+    "model_name": "Wifu Diffusion",
+    "description": "waifu-diffusion is a latent text-to-image diffusion model that has been conditioned on high-quality anime images through fine-tuning.",
+    "screenshots": "https://d1okzptojspljx.cloudfront.net/generations/21468819471669474933.png"
+  },
+]

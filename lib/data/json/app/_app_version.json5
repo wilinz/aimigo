@@ -1,0 +1,16 @@
+{
+  "code": 0,
+  "data": {
+    "app_name": "string",
+    "appid": "string",
+    "can_hide": true,
+    "changelog": "string",
+    "created_at": 0,
+    "download_url": "string",
+    "is_force": true,
+    "updated_at": 0,
+    "version_code": 0,
+    "version_name": "string"
+  },
+  "msg": "string"
+}

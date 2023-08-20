@@ -105,7 +105,7 @@ class _$UserDao extends UserDao {
   _$UserDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
         _userInsertionAdapter = InsertionAdapter(
             database,
             'users',
@@ -116,7 +116,8 @@ class _$UserDao extends UserDao {
                   'is_active': item.isActive ? 1 : 0,
                   'create_time': _dateTimeConverter.encode(item.createTime),
                   'update_time': _dateTimeConverter.encode(item.updateTime)
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -137,6 +138,21 @@ class _$UserDao extends UserDao {
             username: row['username'] as String,
             password: row['password'] as String,
             isActive: (row['is_active'] as int) != 0));
+  }
+
+  @override
+  Stream<User?> getActiveStream() {
+    return _queryAdapter.queryStream(
+        'SELECT * FROM users WHERE is_active = 1 LIMIT 1',
+        mapper: (Map<String, Object?> row) => User(
+            updateTime: _dateTimeConverter.decode(row['update_time'] as int),
+            createTime:
+                _dateTimeNullableConverter.decode(row['create_time'] as int?),
+            username: row['username'] as String,
+            password: row['password'] as String,
+            isActive: (row['is_active'] as int) != 0),
+        queryableName: 'users',
+        isView: false);
   }
 
   @override
@@ -167,6 +183,21 @@ class _$UserDao extends UserDao {
   }
 
   @override
+  Stream<List<User>> getRecentStream() {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM users ORDER BY update_time DESC LIMIT 5',
+        mapper: (Map<String, Object?> row) => User(
+            updateTime: _dateTimeConverter.decode(row['update_time'] as int),
+            createTime:
+                _dateTimeNullableConverter.decode(row['create_time'] as int?),
+            username: row['username'] as String,
+            password: row['password'] as String,
+            isActive: (row['is_active'] as int) != 0),
+        queryableName: 'users',
+        isView: false);
+  }
+
+  @override
   Future<List<User>> searchUsers(String keyword) async {
     return _queryAdapter.queryList('SELECT * FROM users WHERE username LIKE ?1',
         mapper: (Map<String, Object?> row) => User(
@@ -189,6 +220,12 @@ class _$UserDao extends UserDao {
             username: row['username'] as String,
             password: row['password'] as String,
             isActive: (row['is_active'] as int) != 0));
+  }
+
+  @override
+  Future<void> offlineCurrent() async {
+    await _queryAdapter
+        .queryNoReturn('UPDATE users SET is_active = 0 WHERE is_active = 1');
   }
 
   @override

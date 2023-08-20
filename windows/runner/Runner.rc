@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.wilinz.flutter_template" "\0"
-            VALUE "FileDescription", "flutter_template" "\0"
+            VALUE "CompanyName", "com.wilinz.aimigo" "\0"
+            VALUE "FileDescription", "aimigo" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "flutter_template" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.wilinz.flutter_template. All rights reserved." "\0"
-            VALUE "OriginalFilename", "flutter_template.exe" "\0"
-            VALUE "ProductName", "flutter_template" "\0"
+            VALUE "InternalName", "aimigo" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 com.wilinz.aimigo. All rights reserved." "\0"
+            VALUE "OriginalFilename", "aimigo.exe" "\0"
+            VALUE "ProductName", "aimigo" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

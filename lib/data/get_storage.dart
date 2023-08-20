@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 
 late GetStorage getStorage;
 
-initGetStorage() async {
+Future<void> initGetStorage() async {
   if (!GetPlatform.isWeb) {
     final path = await getApplicationSupportDirectory();
     getStorage = GetStorage('GetStorage', path.path);

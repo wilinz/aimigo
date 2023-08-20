@@ -29,5 +29,5 @@ jobs:
       - name: Upload to artifact
         uses: actions/upload-artifact@v3
         with:
-          name: flutter_template.dmg
-          path: dmg/flutter_template.dmg
+          name: aimigo.dmg
+          path: dmg/aimigo.dmg
