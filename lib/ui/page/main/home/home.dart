@@ -91,7 +91,7 @@ class _HomePageState extends State<_HomePage>
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // 当FAB被点击时执行的操作
-          Get.snackbar("施工中", "正在施工中");
+          Get.toNamed(AppRoute.postPage);
         },
         child: Icon(Icons.add), // FAB上的图标
       ),
@@ -116,7 +116,7 @@ class MyStaggeredGridView extends StatelessWidget {
     },
     {
       'image': 'assets/images/girl2.png',
-      'title': '泰裤辣，快看看我用的是什么 prompt',
+      'title': '泰裤辣，快看看我的 prompt',
     },
     {
       'image': 'assets/images/girl3.png',
@@ -132,15 +132,15 @@ class MyStaggeredGridView extends StatelessWidget {
     },
     {
       'image': 'assets/images/girl6.png',
-      'title': '什么样的文案才配得上这样的美女',
+      'title': '没有标题',
     },
     {
       'image': 'assets/images/girl7.png',
-      'title': 'Ai太强了',
+      'title': '6',
     },
     {
       'image': 'assets/images/girl8.png',
-      'title': 'Ai女友',
+      'title': 'Aimigo',
     },
     {
       'image': 'assets/images/girl9.png',

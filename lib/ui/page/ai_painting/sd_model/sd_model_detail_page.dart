@@ -22,6 +22,15 @@ class _SDModelDetailPageState extends State<SDModelDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("详情"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.favorite_outline),
+            onPressed: () async {
+              Future.delayed(Duration(milliseconds: 500));
+              Get.snackbar('成功', "收藏成功");
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,7 +53,8 @@ class _SDModelDetailPageState extends State<SDModelDetailPage> {
                   Text(widget.model.modelName, style: TextStyle(fontSize: 18)),
                   MyMarkdownBlock(
                     data: widget.model.description,
-                    builder: (widget) => SelectionTransformer.separated(child: SelectionArea(child: widget)),
+                    builder: (widget) => SelectionTransformer.separated(
+                        child: SelectionArea(child: widget)),
                   ),
                 ],
               ),

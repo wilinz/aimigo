@@ -1,3 +1,4 @@
+import 'package:aimigo/ui/widget/context_menu_region.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -303,12 +304,15 @@ class Text2ImgPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Generate images
-                        generate(context);
-                      },
-                      child: Text('生成'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Generate images
+                          generate(context);
+                        },
+                        child: Text('生成'),
+                      ),
                     ),
                     SizedBox(height: 16.0),
                     Obx(
@@ -323,17 +327,28 @@ class Text2ImgPage extends StatelessWidget {
                             itemCount: c.outputImages.length,
                             itemBuilder: (context, index) {
                               final image = c.outputImages[index];
-                              return CachedNetworkImage(
-                                imageUrl: image,
-                                placeholder: (context, url) => SizedBox(
-                                    height: 200,
-                                    width: 200,
-                                    child: Center(
-                                        child: CircularProgressIndicator())),
-                                errorWidget: (context, url, error) => SizedBox(
-                                    height: 200,
-                                    width: 200,
-                                    child: Center(child: Icon(Icons.error))),
+                              return ContextMenuRegion(
+                                contextMenuBuilder:
+                                    (BuildContext context, Offset offset) =>
+                                        _buildContent(context, offset, image),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: CachedNetworkImage(
+                                    imageUrl: image,
+                                    placeholder: (context, url) => SizedBox(
+                                        height: 200,
+                                        width: 200,
+                                        child: Center(
+                                            child:
+                                                CircularProgressIndicator())),
+                                    errorWidget: (context, url, error) =>
+                                        SizedBox(
+                                            height: 200,
+                                            width: 200,
+                                            child: Center(
+                                                child: Icon(Icons.error))),
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -348,6 +363,22 @@ class Text2ImgPage extends StatelessWidget {
         }),
       ),
     );
+  }
+
+  Widget _buildContent(BuildContext context, Offset offset, String imageUrl) {
+    return AdaptiveTextSelectionToolbar.buttonItems(
+        anchors: TextSelectionToolbarAnchors(
+          primaryAnchor: offset,
+        ),
+        buttonItems: ['保存图片']
+            .map((label) => ContextMenuButtonItem(
+                  onPressed: () {
+                    ContextMenuController.removeAny();
+                    c.saveNetworkImage(imageUrl);
+                  },
+                  label: label,
+                ))
+            .toList());
   }
 
   generate(BuildContext context) async {

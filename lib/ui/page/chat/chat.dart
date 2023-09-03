@@ -169,6 +169,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin {
   final ChatController c = Get.put(ChatController());
+  var model = "gpt3.5";
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +177,31 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
         appBar: AppBar(
           title: Text('聊天'),
           actions: [
+            DropdownButton(
+              padding: EdgeInsets.only(left: 12, right: 12),
+              value: model,
+              focusColor: Colors.transparent,
+              // 设置焦点颜色为透明
+              items: [
+                DropdownMenuItem(
+                  value: "gpt3.5",
+                  child: Text('gpt3.5'),
+                ),
+                DropdownMenuItem(
+                  value: "gpt3.5-16k",
+                  child: Text('gpt3.5-16k'),
+                ),
+                DropdownMenuItem(
+                  value: "gpt4",
+                  child: Text('gpt4'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  model = value!;
+                });
+              },
+            ),
             IconButton(
                 onPressed: () {
                   Get.dialog(AlertDialog(

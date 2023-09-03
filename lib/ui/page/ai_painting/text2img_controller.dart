@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:dart_extensions/dart_extensions.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/src/cancel_token.dart';
 import 'package:flutter/widgets.dart';
 import 'package:aimigo/data/model/stablediffusion/sdcommunity/model_response/model_response.dart';
@@ -7,6 +10,7 @@ import 'package:aimigo/data/model/stablediffusion/sdcommunity/text2img_response/
 import 'package:aimigo/data/network.dart';
 import 'package:aimigo/util/bool.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 /// | Parameter               | Description                                                  |
 /// | ----------------------- | ------------------------------------------------------------ |
@@ -140,5 +144,20 @@ class Text2ImgPageController extends GetxController {
   String getUpscale(int upscale) {
     if (upscale < 1) return "no";
     return upscale.toString();
+  }
+
+  saveNetworkImage(String url) async {
+    var response = await Dio()
+        .get(url, options: Options(responseType: ResponseType.bytes));
+    final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 60,
+        name: "hello");
+    // {filePath: content://media/external/images/media/1000033022, errorMessage: null, isSuccess: true}
+    if (result['isSuccess'] == true) {
+      Get.snackbar("成功", "保存成功");
+    } else {
+      Get.snackbar("失败", result['errorMessage']);
+    }
   }
 }
