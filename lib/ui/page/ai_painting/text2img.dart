@@ -298,7 +298,7 @@ class Text2ImgPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              // SizedBox(height: 0.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -321,10 +321,15 @@ class Text2ImgPage extends StatelessWidget {
                         children: [
                           Text('输出图像：'),
                           SizedBox(height: 8.0),
-                          ListView.builder(
+                          ListView.separated(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
+                            // padding: EdgeInsets.all(16.0),
                             itemCount: c.outputImages.length,
+                            separatorBuilder: (BuildContext context, int index) {
+                              // 返回用于分隔列表项的小部件
+                              return SizedBox(height: 16);
+                            },
                             itemBuilder: (context, index) {
                               final image = c.outputImages[index];
                               return ContextMenuRegion(
