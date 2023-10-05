@@ -31,11 +31,14 @@ class MyMarkdownController extends GetxController {
     await dir.create(recursive: true);
 
     final file =
-        File(join(dir.path, DateTime.now().millisecond.toString() + ".mp3"));
+    File(join(dir.path, DateTime
+        .now()
+        .millisecond
+        .toString() + ".mp3"));
 
     final sink = file.openWrite();
     final stream =
-        tts(message.content, language: "zh_CN", voiceName: "zh-CN-YunxiNeural");
+    tts(message.content, language: "zh_CN", voiceName: "zh-CN-YunxiNeural");
     stream.listen((bytes) {
       sink.add(bytes);
     }, onDone: () async {
@@ -80,16 +83,15 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
     return Obx(() {
       return MyMarkdownBlock(
         data:
-            widget.message.content.isNotEmpty ? widget.message.content : "...",
+        widget.message.content.isNotEmpty ? widget.message.content : "...",
         isSourceMode: c.isSourceMode.value,
         builder: (child) {
           return SelectionArea(
             child: SelectionTransformer.separated(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: child,
-              )
-            ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: child,
+                )),
             contextMenuBuilder: (context, editableTextState) {
               final TextEditingValue value = editableTextState.textEditingValue;
               final items = editableTextState.contextMenuButtonItems
@@ -130,7 +132,7 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
   ContextMenuButtonItem getLocalizedContextMenuButtonItem(
       ContextMenuButtonItem e) {
     switch (e.type) {
-      //GetTheLocalizedContextMenuButtonItem
+    //GetTheLocalizedContextMenuButtonItem
       case ContextMenuButtonType.copy:
         return e.copyWith(label: "复制");
       case ContextMenuButtonType.selectAll:
@@ -167,9 +169,9 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin {
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin {
   final ChatController c = Get.put(ChatController());
-  var model = "gpt3.5";
 
   @override
   Widget build(BuildContext context) {
@@ -177,31 +179,29 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
         appBar: AppBar(
           title: Text('聊天'),
           actions: [
-            DropdownButton(
-              padding: EdgeInsets.only(left: 12, right: 12),
-              value: model,
-              focusColor: Colors.transparent,
-              // 设置焦点颜色为透明
-              items: [
-                DropdownMenuItem(
-                  value: "gpt3.5",
-                  child: Text('gpt3.5'),
-                ),
-                DropdownMenuItem(
-                  value: "gpt3.5-16k",
-                  child: Text('gpt3.5-16k'),
-                ),
-                DropdownMenuItem(
-                  value: "gpt4",
-                  child: Text('gpt4'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  model = value!;
-                });
-              },
-            ),
+            Obx(() => DropdownButton(
+                padding: EdgeInsets.only(left: 12, right: 12),
+                value: c.model.value,
+                focusColor: Colors.transparent,
+                // 设置焦点颜色为透明
+                items: [
+                  DropdownMenuItem(
+                    value: "gpt-3.5-turbo",
+                    child: Text('gpt3.5'),
+                  ),
+                  DropdownMenuItem(
+                    value: "gpt-3.5-turbo-16k",
+                    child: Text('gpt3.5-16k'),
+                  ),
+                  DropdownMenuItem(
+                    value: "gpt-4",
+                    child: Text('gpt4'),
+                  ),
+                ],
+                onChanged: (value) {
+                  c.model.value = value!;
+                },
+              )),
             IconButton(
                 onPressed: () {
                   Get.dialog(AlertDialog(
@@ -240,9 +240,9 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         textDirection:
-                            message.role == OpenAIChatMessageRole.user
-                                ? TextDirection.rtl
-                                : TextDirection.ltr,
+                        message.role == OpenAIChatMessageRole.user
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
@@ -261,7 +261,8 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: SizedBox.square(
                                   dimension: 48,
-                                  child: Image.asset("assets/images/wilinz.jpg"),
+                                  child:
+                                  Image.asset("assets/images/wilinz.jpg"),
                                 ),
                               ),
                             ),
@@ -292,7 +293,8 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                         SendMessageIntent: CallbackAction<SendMessageIntent>(
                             onInvoke: _sendMessage),
                       },
-                      child: Obx(() => TextFormField(
+                      child: Obx(() =>
+                          TextFormField(
                             controller: c.inputController,
                             autofocus: false,
                             maxLines: 10,
@@ -307,7 +309,7 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                                   icon: Icon(Icons.send)),
                               border: const OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(16))),
+                                  BorderRadius.all(Radius.circular(16))),
                             ),
                             onChanged: (v) {
                               c.update();
@@ -325,11 +327,11 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
 
   @override
   bool get wantKeepAlive => true;
-
 }
 
 class ChatController extends GetxController {
   final messages = RxList<OpenAIChatCompletionChoiceMessageModel>().obs;
+  var model = "gpt3.5".obs;
 
   final inputController = TextEditingController(text: "");
   var inputNoBlank = false.obs;
@@ -338,7 +340,8 @@ class ChatController extends GetxController {
   clearMessage() {
     messages.value.clear();
     final message0 = OpenAIChatCompletionChoiceMessageModel(
-        role: OpenAIChatMessageRole.system, content: "您好，有什么需要帮助的吗？");
+        role: OpenAIChatMessageRole.system,
+        content: "您好，有什么需要帮助的吗？");
     messages.value.add(message0);
   }
 
@@ -354,10 +357,10 @@ class ChatController extends GetxController {
   void _scrollToBottom() {
     try {
       scrollController.jumpTo(
-            scrollController.position.maxScrollExtent,
-            // duration: Duration(milliseconds: 10),
-            // curve: Curves.easeInOut,
-          );
+        scrollController.position.maxScrollExtent,
+        // duration: Duration(milliseconds: 10),
+        // curve: Curves.easeInOut,
+      );
     } catch (e) {
       print(e);
     }
@@ -381,9 +384,9 @@ class ChatController extends GetxController {
       final client = await AppNetwork.getRawHttpClient();
       Stream<OpenAIStreamChatCompletionModel> chatStream = OpenAI.instance.chat
           .createStream(
-              model: "gpt-3.5-turbo-16k-0613",
-              messages: messages.value,
-              client: client);
+          model: model.value,
+          messages: messages.value,
+          client: client);
 
       //构建响应消息
       final message = OpenAIChatCompletionChoiceMessageModel(
@@ -395,7 +398,7 @@ class ChatController extends GetxController {
 
       //监听响应
       chatStream.listen(
-          (streamChatCompletion) {
+              (streamChatCompletion) {
             try {
               //获取响应内容
               final content = streamChatCompletion.choices.first.delta.content;
