@@ -146,7 +146,7 @@ class AppNetwork {
   factory AppNetwork.get() => _instance!;
 
   static Future<void> init() async {
-    getInstance();
+    await getInstance();
   }
 
   static Future<AppNetwork> getInstance() async {
