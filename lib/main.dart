@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:aimigo/data/database/database.dart';
@@ -234,3 +235,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+ScrollBehavior myScrollBehavior(BuildContext context) =>
+    ScrollConfiguration.of(context).copyWith(
+      dragDevices: PointerDeviceKind.values.toSet(),
+    );

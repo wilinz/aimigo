@@ -1,3 +1,4 @@
+import 'package:aimigo/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,7 @@ class _SDModelPageState extends State<SDModelPage>
           getSDModel();
         },
         child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: PointerDeviceKind.values.toSet(),
-          ),
+          behavior: myScrollBehavior(context),
           child: MasonryGridView.count(
             padding: EdgeInsets.all(8),
             crossAxisCount: 2,
