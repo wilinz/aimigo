@@ -41,7 +41,7 @@ jobs:
 
       - name: Package as zip
         run: |
-          cd build/windows/runner/Release
+          cd build/windows/x64/runner/Release
           zip -q -r ../aimigo_windows.zip ./*
           cd ../../../../
 
@@ -49,4 +49,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: aimigo_windows.zip
-          path: build/windows/runner/aimigo_windows.zip
+          path: build/windows/x64/runner/aimigo_windows.zip
