@@ -81,6 +81,7 @@ class AppNetwork {
   }
 
   static void proxy(Dio dio) {
+    return ;
     // if (!kReleaseMode &&
     //     (getx.GetPlatform.isWindows ||
     //         getx.GetPlatform.isMacOS ||
@@ -125,15 +126,28 @@ class AppNetwork {
 
   late OpenAiClient openAiClient;
 
-  _initOpenAi() {
+  void setOpenAiConfig({required String apikey, String? baseUrl}){
     final dio = Dio();
     dio.httpClientAdapter = getHttpClientAdapter();
     proxy(dio);
 
     openAiClient = OpenAiClient(
-        apiKey: "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",
-        // baseUrl: baseUrl + "/openai",
+        apiKey: apikey,
+        baseUrl: baseUrl ?? openAiBaseUrl,
         dio: dio);
+  }
+
+  static const String openAiBaseUrl = "https://api.openai.com/";
+
+  _initOpenAi() {
+    // final dio = Dio();
+    // dio.httpClientAdapter = getHttpClientAdapter();
+    // proxy(dio);
+    //
+    // openAiClient = OpenAiClient(
+    //     apiKey: "",
+    //     baseUrl: openAiBaseUrl,
+    //     dio: dio);
   }
 
   AppNetwork._create();
