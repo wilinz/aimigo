@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:aimigo/ui/page/chat/chat_controller.dart';
 import 'package:aimigo/ui/page/chat/markdown_controller.dart';
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +46,30 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
         (child, text) => CodeWrapperWidget(child: child, text: text);
 
     return Obx(() {
+      String? data = c.message.content is String?
+          ? c.message.contentAsString
+          : c.message.contentAsMessageContentList
+              ?.firstWhere((e) => e.type == MessageContentType.text)
+              .text;
+
+      String? mkImageList;
+      if (!(c.message.content is String?)) {
+        int i = 1;
+        mkImageList = c.message.contentAsMessageContentList!
+            .filter((e) => e.imageUrl != null)
+            .map((e) {
+              final mk = "![img$i](${e.imageUrl!.url})";
+              i++;
+              return mk;
+            })
+            .toList()
+            .join("\n");
+      }
+
+      if (data == null) data = "...";
+      final mkData = mkImageList != null ? (data + "  \n" + mkImageList) : data;
       return MyMarkdownBlock(
-        data:
-            widget.message.content.isNotEmpty ? widget.message.content : "...",
+        data: mkData,
         isSourceMode: c.isSourceMode.value,
         builder: (child) {
           return SelectionArea(
@@ -85,7 +107,7 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
               ? PreConfig.darkConfig.copy(wrapper: codeWrapper)
               : PreConfig().copy(wrapper: codeWrapper)
         ]),
-        markdownGeneratorConfig: MarkdownGeneratorConfig(
+        generator: MarkdownGenerator(
             generators: [latexGenerator], inlineSyntaxList: [LatexSyntax()]),
       );
     });
@@ -145,7 +167,7 @@ class _ChatPageState extends State<ChatPage>
                                   e.id,
                                   style: TextStyle(
                                       color: c.model == e
-                                          ? Theme.of(context).primaryColor
+                                          ? Colors.green
                                           : null),
                                 ),
                               ))
@@ -247,39 +269,96 @@ class _ChatPageState extends State<ChatPage>
               }),
             ),
             Padding(
-                padding: const EdgeInsets.all(16),
-                child: Shortcuts(
-                    shortcuts: <ShortcutActivator, Intent>{
-                      LogicalKeySet(LogicalKeyboardKey.control,
-                          LogicalKeyboardKey.enter): const SendMessageIntent(),
-                    },
-                    child: Actions(
-                      actions: <Type, Action<Intent>>{
-                        SendMessageIntent: CallbackAction<SendMessageIntent>(
-                            onInvoke: _sendMessage),
-                      },
-                      child: Obx(() => TextFormField(
-                            controller: c.inputController,
-                            autofocus: false,
-                            maxLines: 10,
-                            minLines: 1,
-                            decoration: InputDecoration(
-                              labelText: "消息",
-                              hintText: "请输入消息",
-                              suffixIcon: IconButton(
-                                  onPressed: c.inputNoBlank.value
-                                      ? c.sendMessages
-                                      : null,
-                                  icon: Icon(Icons.send)),
-                              border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(16))),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Column(
+                  children: [
+                    Obx(() => c.images.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: Color(0x10555555),
+                              ),
+                              height: 100,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: c.images.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Material(
+                                        elevation: 8,
+                                        child: Stack(children: [
+                                          Image.file(
+                                            c.images[index],
+                                            height: 200,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    c.images.removeAt(index);
+                                                  });
+                                                },
+                                                icon: Icon(Icons.clear)),
+                                          )
+                                        ]),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                            onChanged: (v) {
-                              c.update();
-                            },
-                          )),
-                    ))),
+                          )
+                        : Container()),
+                    Shortcuts(
+                        shortcuts: <ShortcutActivator, Intent>{
+                          LogicalKeySet(LogicalKeyboardKey.control,
+                                  LogicalKeyboardKey.enter):
+                              const SendMessageIntent(),
+                        },
+                        child: Actions(
+                          actions: <Type, Action<Intent>>{
+                            SendMessageIntent:
+                                CallbackAction<SendMessageIntent>(
+                                    onInvoke: _sendMessage),
+                          },
+                          child: Obx(() => TextFormField(
+                                controller: c.inputController,
+                                autofocus: false,
+                                maxLines: 10,
+                                minLines: 1,
+                                decoration: InputDecoration(
+                                  labelText: "消息",
+                                  hintText: "请输入消息",
+                                  prefixIcon: IconButton(
+                                      onPressed: c.getImages,
+                                      icon: Icon(Icons.photo_album_outlined)),
+                                  suffixIcon: IconButton(
+                                      onPressed: c.inputNoBlank.value
+                                          ? c.sendMessages
+                                          : null,
+                                      icon: Icon(Icons.send)),
+                                  border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(16))),
+                                ),
+                                onChanged: (v) {
+                                  c.update();
+                                },
+                              )),
+                        )),
+                    Row(
+                      children: [],
+                    )
+                  ],
+                )),
             SizedBox(height: 8)
           ],
         ));

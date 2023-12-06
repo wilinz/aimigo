@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:aimigo/data/network.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 class ChatController extends GetxController {
@@ -13,6 +16,8 @@ class ChatController extends GetxController {
 
   final models = <OpenAiModel>[].obs;
   final model = Rx<OpenAiModel?>(null);
+  final picker = ImagePicker();
+  final images = <File>[].obs;
 
   clearMessage() {
     messages.value.clear();
@@ -64,6 +69,17 @@ class ChatController extends GetxController {
     }
   }
 
+  Future getImages() async {
+    final pickedFiles = await picker.pickMultiImage(
+        maxWidth: 1024, maxHeight: 1024, imageQuality: null);
+    if (pickedFiles.isNotEmpty) {
+      images.addAll(
+          pickedFiles.map((pickedFile) => File(pickedFile.path)).toList());
+    } else {
+      print('No images selected.');
+    }
+  }
+
   void sendMessages() async {
     try {
       final chatModel = model.value?.id;
@@ -72,12 +88,38 @@ class ChatController extends GetxController {
         return;
       }
 
+      if (images.isNotEmpty) {
+        if (!chatModel.contains("vision")) {
+          Get.snackbar("失败", "选请择包含 \"vision\" 的模型");
+          return;
+        }
+      }
       //获取消息
       final msg = inputController.text;
       //清空输入
       inputController.text = "";
+
+      ChatMessage message0;
+      int? maxToken;
       //构建用户消息
-      final message0 = ChatMessage(role: ChatMessageRole.user, content: msg);
+      if (images.isNotEmpty) {
+        maxToken = 4096;
+        final openaiImages = await Future.wait(images.map((e) async {
+          final stream = e.openRead();
+          return MessageContent.fromImage(
+              await OpenAiImageInfo.fromStream(stream));
+        }));
+        message0 = ChatMessage(
+            role: ChatMessageRole.user,
+            content: <MessageContent>[
+              MessageContent.fromText(msg),
+              ...openaiImages
+            ]);
+        images([]);
+      }else{
+        message0 = ChatMessage(role: ChatMessageRole.user, content: msg);
+      }
+
       //将消息加入消息列表
       messages.value.add(message0);
       //滚到列表底部
@@ -90,8 +132,7 @@ class ChatController extends GetxController {
         return;
       }
       final chatStream = client.chatCompletionApi.createChatCompletionStream(
-          ChatCompletionRequest(
-              messages: messages.value, model: chatModel));
+          ChatCompletionRequest(messages: messages.value, model: chatModel, maxTokens: maxToken));
 
       //构建响应消息
       final message = ChatMessage(role: ChatMessageRole.assistant, content: "");
@@ -119,7 +160,9 @@ class ChatController extends GetxController {
               print(e);
             }
           },
-          onDone: () {},
+          onDone: () {
+            print("完成");
+          },
           onError: (e, s) {
             print(e);
             print(s);

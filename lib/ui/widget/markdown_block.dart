@@ -16,7 +16,7 @@ class MyMarkdownBlock extends StatelessWidget {
   final MarkdownConfig? config;
 
   ///config for [MarkdownGenerator]
-  final MarkdownGeneratorConfig? markdownGeneratorConfig;
+  final MarkdownGenerator? generator;
 
   final bool isSourceMode;
 
@@ -26,23 +26,15 @@ class MyMarkdownBlock extends StatelessWidget {
     this.builder,
     this.isSourceMode = false,
     this.config,
-    this.markdownGeneratorConfig,
+    this.generator,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final generatorConfig =
-        markdownGeneratorConfig ?? MarkdownGeneratorConfig();
-    final markdownGenerator = MarkdownGenerator(
-      config: config,
-      inlineSyntaxes: generatorConfig.inlineSyntaxList,
-      blockSyntaxes: generatorConfig.blockSyntaxList,
-      linesMargin: generatorConfig.linesMargin,
-      generators: generatorConfig.generators,
-      onNodeAccepted: generatorConfig.onNodeAccepted,
-      textGenerator: generatorConfig.textGenerator,
-    );
-    final widgets = markdownGenerator.buildWidgets(data);
+
+    final markdownGenerator = generator ?? MarkdownGenerator();
+    final widgets = markdownGenerator.buildWidgets(data, config: config);
+
     final child = isSourceMode
         ? Padding(
           padding: const EdgeInsets.all(4.0),
