@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:aimigo/ui/page/chat/chat_controller.dart';
 import 'package:aimigo/ui/page/chat/markdown_controller.dart';
@@ -60,7 +61,6 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
             contextMenuBuilder: (context, editableTextState) {
               final TextEditingValue value = editableTextState.textEditingValue;
               final items = editableTextState.contextMenuButtonItems
-                  .map((e) => getLocalizedContextMenuButtonItem(e))
                   .toList();
               items.addAll([
                 ContextMenuButtonItem(
@@ -94,28 +94,6 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
     });
   }
 
-  ContextMenuButtonItem getLocalizedContextMenuButtonItem(
-      ContextMenuButtonItem e) {
-    switch (e.type) {
-      //GetTheLocalizedContextMenuButtonItem
-      case ContextMenuButtonType.copy:
-        return e.copyWith(label: "复制");
-      case ContextMenuButtonType.selectAll:
-        return e.copyWith(label: "全选");
-      case ContextMenuButtonType.cut:
-        return e.copyWith(label: "剪切");
-      case ContextMenuButtonType.paste:
-        return e.copyWith(label: "粘贴");
-      case ContextMenuButtonType.delete:
-        return e.copyWith(label: "删除");
-      case ContextMenuButtonType.liveTextInput:
-      case ContextMenuButtonType.custom:
-        return e;
-      default:
-        return e;
-    }
-  }
-
   final selectionToolbarButtonStyle = ButtonStyle(
     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(
@@ -138,7 +116,6 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin {
   final ChatController c = Get.put(ChatController());
-  var model = "gpt3.5";
 
   @override
   Widget build(BuildContext context) {

@@ -134,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage>
                       appVersion.isHasNewVersion(packageInfo)) {
                     return Text("版本：${packageInfo.version} -> ${appVersion.versionName}");
                   }
-                  return Text("版本：${packageInfo.version ?? ""}");
+                  return Text("版本：${packageInfo.version}");
                 }),
                 trailing: Icon(Icons.arrow_forward_ios_outlined),
               )

@@ -25,11 +25,17 @@ extension LocaleExtensions on Locale {
 
 class SettingsController extends GetxController {
   final GetStorage _storage;
-  final _themeKey = 'theme';
-  final _languageKey = 'language';
+  static const themeKey = 'theme';
+  static const languageKey = 'language';
+  static const openaiBaseUrl = 'openai_base_url';
+  static const openaiApiKey = 'openai_api_key';
 
   var themeMode = ThemeMode.system.obs;
   var locale = LocaleExtensions.LocaleFromCode(null).obs;
+
+  final openaiBaseUrlController = TextEditingController();
+
+  final apiKeyController = TextEditingController();
 
   SettingsController(this._storage);
 
@@ -37,11 +43,11 @@ class SettingsController extends GetxController {
   void onInit() {
     super.onInit();
     // 从存储中加载主题设置和语言设置
-    _storage.read<int?>(_themeKey)?.let((it) {
+    _storage.read<int?>(themeKey)?.let((it) {
       themeMode.value = ThemeMode.values[it];
     });
 
-    LocaleExtensions.LocaleFromCode(_storage.read(_languageKey))
+    LocaleExtensions.LocaleFromCode(_storage.read(languageKey))
         ?.let((it) => locale.value = it);
   }
 
@@ -50,7 +56,7 @@ class SettingsController extends GetxController {
     Get.changeThemeMode(mode);
     // Get.changeThemeMode(option);
     // 将主题设置保存到存储中
-    _storage.write(_themeKey, mode.index);
+    _storage.write(themeKey, mode.index);
   }
 
   void changeLanguage(String? newLocale) {
@@ -61,6 +67,15 @@ class SettingsController extends GetxController {
       Get.deviceLocale?.let((it) => Get.updateLocale(it));
     }
     // 将语言设置保存到存储中
-    _storage.write(_languageKey, locale.value?.toLocaleCode());
+    _storage.write(languageKey, locale.value?.toLocaleCode());
   }
+
+  saveOpenaiBaseUrl() {
+    _storage.write(openaiBaseUrl, openaiBaseUrlController.text);
+  }
+
+  saveApiKey() {
+    _storage.write(openaiApiKey, apiKeyController.text);
+  }
+
 }

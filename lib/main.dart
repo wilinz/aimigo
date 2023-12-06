@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:aimigo/data/database/database.dart';
@@ -18,7 +19,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'ui/route.dart';
 import 'util/platform.dart';
 
@@ -94,6 +95,10 @@ class _MyAppState extends State<MyApp> with WindowListener {
       title: 'app_name'.tr,
       translations: Messages(),
       defaultTransition: Transition.cupertino,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: [
+        settings.locale.value ?? Get.deviceLocale ?? Locale("zh", "CN"),
+      ],
       // 转场动画
       // locale: Locale('en', 'US'),
       locale: settings.locale.value ?? Get.deviceLocale,
@@ -234,3 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+ScrollBehavior myScrollBehavior(BuildContext context) =>
+    ScrollConfiguration.of(context).copyWith(
+      dragDevices: PointerDeviceKind.values.toSet(),
+    );
