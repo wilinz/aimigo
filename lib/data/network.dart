@@ -31,7 +31,7 @@ extension DioExt on Dio {
 
 class AppNetwork {
   static const String baseUrl = "https://aimigo.wilinz.com";
-
+  // static const String baseUrl = "http://aimigo.wilinz.com:10012";
   // static const String baseUrl = "https://192.168.1.5:10010";
   static const String typeUrlEncode = "application/x-www-form-urlencoded";
   static const String userAgent =
