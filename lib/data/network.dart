@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:aimigo/data/get_storage.dart';
+import 'package:aimigo/ui/page/settings/settings.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dart_openai/dart_openai.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +33,7 @@ extension DioExt on Dio {
 
 class AppNetwork {
   static const String baseUrl = "https://aimigo.wilinz.com";
+
   // static const String baseUrl = "http://aimigo.wilinz.com:10012";
   // static const String baseUrl = "https://192.168.1.5:10010";
   static const String typeUrlEncode = "application/x-www-form-urlencoded";
@@ -66,6 +68,12 @@ class AppNetwork {
     }
 
     // proxy(dio);
+    setDioLogger(dio);
+    dio.interceptors.add(JsonpInterceptor());
+    return dio;
+  }
+
+  static void setDioLogger(Dio dio) {
     if (kDebugMode) {
       dio.interceptors.add(PrettyDioLogger(
           requestHeader: true,
@@ -76,12 +84,10 @@ class AppNetwork {
           compact: true,
           maxWidth: 200));
     }
-    dio.interceptors.add(JsonpInterceptor());
-    return dio;
   }
 
   static void proxy(Dio dio) {
-    return ;
+    return;
     // if (!kReleaseMode &&
     //     (getx.GetPlatform.isWindows ||
     //         getx.GetPlatform.isMacOS ||
@@ -124,22 +130,26 @@ class AppNetwork {
     ]);
   }
 
-  late OpenAiClient openAiClient;
+  OpenAiClient? openAiClient;
 
-  void setOpenAiConfig({required String apikey, String? baseUrl}){
+  void setupOpenAi({required String apikey, String? baseUrl}) {
     final dio = Dio();
+    setDioLogger(dio);
     dio.httpClientAdapter = getHttpClientAdapter();
     proxy(dio);
 
     openAiClient = OpenAiClient(
-        apiKey: apikey,
-        baseUrl: baseUrl ?? openAiBaseUrl,
-        dio: dio);
+        apiKey: apikey, baseUrl: baseUrl ?? openAiBaseUrl, dio: dio);
   }
 
   static const String openAiBaseUrl = "https://api.openai.com/";
 
   _initOpenAi() {
+    final storage = getStorage;
+    final apikey = storage.read<String?>(AppSettings.openaiApiKey);
+    if (apikey == null) return;
+    final baseUrl = storage.read<String?>(AppSettings.openaiBaseUrl);
+    setupOpenAi(apikey: apikey, baseUrl: baseUrl);
     // final dio = Dio();
     // dio.httpClientAdapter = getHttpClientAdapter();
     // proxy(dio);

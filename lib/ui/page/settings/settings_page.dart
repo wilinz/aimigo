@@ -4,8 +4,7 @@ import '../../../data/get_storage.dart';
 import 'settings_controller.dart';
 
 class SettingsPage extends StatelessWidget {
-  final SettingsController _c =
-      Get.put(SettingsController(getStorage));
+  final SettingsController _c = Get.put(SettingsController(getStorage));
 
   @override
   Widget build(BuildContext context) {
@@ -65,39 +64,57 @@ class SettingsPage extends StatelessWidget {
               onChanged: (value) => _c.changeLanguage(value),
             ),
           ),
-          TextFormField(
-            controller: _c.apiKeyController,
-            autofocus: false,
-            maxLines: 10,
-            minLines: 1,
-            decoration: InputDecoration(
-              labelText: "Api Key",
-              hintText: "请输入Api Key",
-              suffixIcon: IconButton(
-                  onPressed: _c.saveApiKey(),
-                  icon: Icon(Icons.done)),
-              border: const OutlineInputBorder(
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(16))),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+            child: Column(
+              children: [
+                Obx(() => TextFormField(
+                      controller: _c.apiKeyController,
+                      autofocus: false,
+                      obscureText: !_c.apikeyVisible.value,
+                      maxLines: 1,
+                      minLines: 1,
+                      decoration: InputDecoration(
+                        labelText: "接口密钥（api key）",
+                        hintText: "请输入接口密钥（api key）",
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            //根据passwordVisible状态显示不同的图标
+                            _c.apikeyVisible.value
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            //更新状态控制密码显示或隐藏
+                            _c.apikeyVisible.toggle();
+                          },
+                        ),
+                        border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16))),
+                      ),
+                    )),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _c.openaiBaseUrlController,
+                  autofocus: false,
+                  maxLines: 10,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    labelText: "（可选）基本网址（base url）",
+                    hintText: "请输入基本网址（base url）",
+                    border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16))),
+                  ),
+                ),
+                SizedBox(height: 16),
+                SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: _c.setupOpenai, child: Text("保存 OpenAi 配置")))
+              ],
             ),
           ),
-          SizedBox(height: 16),
-          TextFormField(
-            controller: _c.openaiBaseUrlController,
-            autofocus: false,
-            maxLines: 10,
-            minLines: 1,
-            decoration: InputDecoration(
-              labelText: "消息",
-              hintText: "请输入消息",
-              suffixIcon: IconButton(
-                  onPressed: _c.saveOpenaiBaseUrl() ,
-                  icon: Icon(Icons.send)),
-              border: const OutlineInputBorder(
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(16))),
-            ),
-          )
         ],
       ),
     );

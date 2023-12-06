@@ -16,7 +16,6 @@ import 'package:aimigo/ui/page/settings/settings_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,9 +28,11 @@ Future<void> main() async {
   await Future.wait([
     initDatabase(),
     initDesktopWindows(),
-    initGetStorage(),
     initPackageInfo(),
-    AppNetwork.init()
+    () async {
+      await initGetStorage();
+      await AppNetwork.init();
+    }(),
   ]);
   runApp(const MyApp());
 }

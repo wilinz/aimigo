@@ -1,3 +1,6 @@
+import 'package:aimigo/data/network.dart';
+import 'package:aimigo/ui/page/settings/settings.dart';
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -25,13 +28,10 @@ extension LocaleExtensions on Locale {
 
 class SettingsController extends GetxController {
   final GetStorage _storage;
-  static const themeKey = 'theme';
-  static const languageKey = 'language';
-  static const openaiBaseUrl = 'openai_base_url';
-  static const openaiApiKey = 'openai_api_key';
 
   var themeMode = ThemeMode.system.obs;
   var locale = LocaleExtensions.LocaleFromCode(null).obs;
+  final apikeyVisible = false.obs;
 
   final openaiBaseUrlController = TextEditingController();
 
@@ -43,11 +43,19 @@ class SettingsController extends GetxController {
   void onInit() {
     super.onInit();
     // 从存储中加载主题设置和语言设置
-    _storage.read<int?>(themeKey)?.let((it) {
+    _storage.read<int?>(AppSettings.themeKey)?.let((it) {
       themeMode.value = ThemeMode.values[it];
     });
 
-    LocaleExtensions.LocaleFromCode(_storage.read(languageKey))
+    _storage.read<String?>(AppSettings.openaiApiKey)?.let((it) {
+      apiKeyController.text = it;
+    });
+
+    _storage.read<String?>(AppSettings.openaiBaseUrl)?.let((it) {
+      openaiBaseUrlController.text = it;
+    });
+
+    LocaleExtensions.LocaleFromCode(_storage.read(AppSettings.languageKey))
         ?.let((it) => locale.value = it);
   }
 
@@ -56,7 +64,7 @@ class SettingsController extends GetxController {
     Get.changeThemeMode(mode);
     // Get.changeThemeMode(option);
     // 将主题设置保存到存储中
-    _storage.write(themeKey, mode.index);
+    _storage.write(AppSettings.themeKey, mode.index);
   }
 
   void changeLanguage(String? newLocale) {
@@ -67,15 +75,23 @@ class SettingsController extends GetxController {
       Get.deviceLocale?.let((it) => Get.updateLocale(it));
     }
     // 将语言设置保存到存储中
-    _storage.write(languageKey, locale.value?.toLocaleCode());
+    _storage.write(AppSettings.languageKey, locale.value?.toLocaleCode());
   }
 
-  saveOpenaiBaseUrl() {
-    _storage.write(openaiBaseUrl, openaiBaseUrlController.text);
-  }
+  setupOpenai() {
+    final apikey = apiKeyController.text;
+    String? baseUrl =
+        openaiBaseUrlController.text.takeIf((p0) => p0.isNotBlank);
+    if (baseUrl != null) {
+      if (Uri.parse(baseUrl).host.isEmptyOrNull) {
+        baseUrl = null;
+        Get.snackbar("失败", "Url 格式错误！");
+      }
+    }
 
-  saveApiKey() {
-    _storage.write(openaiApiKey, apiKeyController.text);
+    AppNetwork.get().setupOpenAi(apikey: apikey, baseUrl: baseUrl);
+    _storage.write(AppSettings.openaiApiKey, apikey);
+    _storage.write(AppSettings.openaiBaseUrl, baseUrl);
+    Get.snackbar("成功", "保存成功");
   }
-
 }

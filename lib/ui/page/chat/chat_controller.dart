@@ -1,8 +1,5 @@
-
 import 'package:aimigo/data/network.dart';
 import 'package:dart_extensions/dart_extensions.dart';
-import 'package:dart_openai/dart_openai.dart';
-import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
@@ -14,10 +11,13 @@ class ChatController extends GetxController {
   var inputNoBlank = false.obs;
   ScrollController scrollController = ScrollController();
 
+  final models = <OpenAiModel>[].obs;
+  final model = Rx<OpenAiModel?>(null);
+
   clearMessage() {
     messages.value.clear();
-    final message0 = ChatMessage(
-        role: ChatMessageRole.system, content: "您好，有什么需要帮助的吗？");
+    final message0 =
+        ChatMessage(role: ChatMessageRole.system, content: "您好，有什么需要帮助的吗？");
     messages.value.add(message0);
   }
 
@@ -28,6 +28,28 @@ class ChatController extends GetxController {
     inputController.addListener(() {
       inputNoBlank.value = inputController.text.isNotBlank;
     });
+    setupModels();
+  }
+
+  Future<void> setupModels() async {
+    final client = AppNetwork.get().openAiClient;
+    if (client != null) {
+      try {
+        final resp = await client.modelApi.list();
+        final respModels =
+            resp.data.filter((e) => e.id.startsWith("gpt")).toList();
+        respModels.sort((a, b) {
+          final aDate = DateTime.fromMillisecondsSinceEpoch(a.created * 1000);
+          final bDate = DateTime.fromMillisecondsSinceEpoch(b.created * 1000);
+          if (aDate == bDate) return 0;
+          return aDate.isBefore(bDate) ? 1 : -1;
+        });
+        model.value = respModels.firstOrNull;
+        models.value = respModels;
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 
   void _scrollToBottom() {
@@ -44,26 +66,35 @@ class ChatController extends GetxController {
 
   void sendMessages() async {
     try {
+      final chatModel = model.value?.id;
+      if (chatModel == null) {
+        Get.snackbar("失败", "未选择 GPT 模型");
+        return;
+      }
+
       //获取消息
       final msg = inputController.text;
       //清空输入
       inputController.text = "";
       //构建用户消息
-      final message0 = ChatMessage(
-          role: ChatMessageRole.user, content: msg);
+      final message0 = ChatMessage(role: ChatMessageRole.user, content: msg);
       //将消息加入消息列表
       messages.value.add(message0);
       //滚到列表底部
       // _scrollToBottom();
 
       //调用 createStream
-      final chatStream = AppNetwork.get().openAiClient.chatCompletionApi.createChatCompletionStream(
-          ChatCompletionRequest(messages: messages.value, model: "gpt-3.5-turbo-16k-0613")
-      );
+      final client = AppNetwork.get().openAiClient;
+      if (client == null) {
+        Get.snackbar("您未配置 openai ", "请前往“个人主页”->“设置”，配置“Api key”");
+        return;
+      }
+      final chatStream = client.chatCompletionApi.createChatCompletionStream(
+          ChatCompletionRequest(
+              messages: messages.value, model: chatModel));
 
       //构建响应消息
-      final message = ChatMessage(
-          role: ChatMessageRole.assistant, content: "");
+      final message = ChatMessage(role: ChatMessageRole.assistant, content: "");
       //将消息加入消息列表
       messages.value.add(message);
       //获取消息 index
@@ -71,7 +102,7 @@ class ChatController extends GetxController {
 
       //监听响应
       chatStream.listen(
-              (streamChatCompletion) {
+          (streamChatCompletion) {
             try {
               //获取响应内容
               final content = streamChatCompletion.choices.first.delta.content;
@@ -83,7 +114,7 @@ class ChatController extends GetxController {
                   //追加拼接内容
                   content: old.content + (content ?? ""));
               //滚到列表底部
-              _scrollToBottom();
+              // _scrollToBottom();
             } catch (e) {
               print(e);
             }

@@ -16,7 +16,6 @@ import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 import '../../widget/latex.dart';
 
-
 class MyMarkdownWidget extends StatefulWidget {
   final ChatMessage message;
 
@@ -53,15 +52,13 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
         builder: (child) {
           return SelectionArea(
             child: SelectionTransformer.separated(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: child,
-              )
-            ),
+                child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: child,
+            )),
             contextMenuBuilder: (context, editableTextState) {
               final TextEditingValue value = editableTextState.textEditingValue;
-              final items = editableTextState.contextMenuButtonItems
-                  .toList();
+              final items = editableTextState.contextMenuButtonItems.toList();
               items.addAll([
                 ContextMenuButtonItem(
                     onPressed: () {
@@ -114,7 +111,8 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin {
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin {
   final ChatController c = Get.put(ChatController());
 
   @override
@@ -124,31 +122,52 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
         appBar: AppBar(
           title: Text('聊天'),
           actions: [
-            // DropdownButton(
-            //   padding: EdgeInsets.only(left: 12, right: 12),
-            //   value: c.model,
-            //   focusColor: Colors.transparent,
-            //   // 设置焦点颜色为透明
-            //   items: [
-            //     DropdownMenuItem(
-            //       value: "gpt3.5",
-            //       child: Text('gpt3.5'),
-            //     ),
-            //     DropdownMenuItem(
-            //       value: "gpt3.5-16k",
-            //       child: Text('gpt3.5-16k'),
-            //     ),
-            //     DropdownMenuItem(
-            //       value: "gpt4",
-            //       child: Text('gpt4'),
-            //     ),
-            //   ],
-            //   onChanged: (value) {
-            //     setState(() {
-            //       model = value!;
-            //     });
-            //   },
-            // ),
+            Obx(() => c.models.isEmpty
+                ? IconButton(
+                    onPressed: () {
+                      if (c.models.isEmpty) {
+                        c.setupModels();
+                      }
+                    },
+                    icon: Icon(Icons.sync))
+                : Tooltip(
+                    message: c.model.value?.id ?? "未选择",
+                    child: DropdownButton<OpenAiModel>(
+                      padding: EdgeInsets.only(left: 12, right: 12),
+                      hint: Text("未选择"),
+                      value: c.model.value,
+                      focusColor: Colors.transparent,
+                      // 设置焦点颜色为透明
+                      items: c.models
+                          .map((e) => DropdownMenuItem<OpenAiModel>(
+                                value: e,
+                                child: Text(
+                                  e.id,
+                                  style: TextStyle(
+                                      color: c.model == e
+                                          ? Theme.of(context).primaryColor
+                                          : null),
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        c.model.value = value!;
+                      },
+                      selectedItemBuilder: (context) {
+                        return c.models
+                            .map((e) => DropdownMenuItem<OpenAiModel>(
+                                  value: e,
+                                  child: SizedBox(
+                                      width: 100,
+                                      child: Text(
+                                        e.id,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                ))
+                            .toList();
+                      },
+                    ),
+                  )),
             IconButton(
                 onPressed: () {
                   Get.dialog(AlertDialog(
@@ -186,10 +205,9 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                           horizontal: 16, vertical: 8),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        textDirection:
-                            message.role == ChatMessageRole.user
-                                ? TextDirection.rtl
-                                : TextDirection.ltr,
+                        textDirection: message.role == ChatMessageRole.user
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
@@ -208,7 +226,8 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: SizedBox.square(
                                   dimension: 48,
-                                  child: Image.asset("assets/images/wilinz.jpg"),
+                                  child:
+                                      Image.asset("assets/images/wilinz.jpg"),
                                 ),
                               ),
                             ),
@@ -272,5 +291,4 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
 
   @override
   bool get wantKeepAlive => true;
-
 }
