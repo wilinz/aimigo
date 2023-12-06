@@ -4,7 +4,7 @@ import '../../../data/get_storage.dart';
 import 'settings_controller.dart';
 
 class SettingsPage extends StatelessWidget {
-  final SettingsController _settingsController =
+  final SettingsController _c =
       Get.put(SettingsController(getStorage));
 
   @override
@@ -20,7 +20,7 @@ class SettingsPage extends StatelessWidget {
             trailing: Obx(
               () => DropdownButton(
                 padding: EdgeInsets.only(left: 12, right: 12),
-                value: _settingsController.themeMode.value,
+                value: _c.themeMode.value,
                 focusColor: Colors.transparent,
                 // 设置焦点颜色为透明
                 items: [
@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                     child: Text('dark'.tr),
                   ),
                 ],
-                onChanged: (value) => _settingsController.setThemeMode(value!),
+                onChanged: (value) => _c.setThemeMode(value!),
               ),
             ),
           ),
@@ -45,7 +45,7 @@ class SettingsPage extends StatelessWidget {
             title: Text('language'.tr),
             trailing: DropdownButton(
               padding: EdgeInsets.only(left: 12, right: 12),
-              value: _settingsController.locale.value?.toLocaleCode(),
+              value: _c.locale.value?.toLocaleCode(),
               focusColor: Colors.transparent,
               // 设置焦点颜色为透明
               items: <DropdownMenuItem<String?>>[
@@ -62,9 +62,42 @@ class SettingsPage extends StatelessWidget {
                   child: Text('中文'),
                 ),
               ],
-              onChanged: (value) => _settingsController.changeLanguage(value),
+              onChanged: (value) => _c.changeLanguage(value),
             ),
           ),
+          TextFormField(
+            controller: _c.apiKeyController,
+            autofocus: false,
+            maxLines: 10,
+            minLines: 1,
+            decoration: InputDecoration(
+              labelText: "Api Key",
+              hintText: "请输入Api Key",
+              suffixIcon: IconButton(
+                  onPressed: _c.saveApiKey(),
+                  icon: Icon(Icons.done)),
+              border: const OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(16))),
+            ),
+          ),
+          SizedBox(height: 16),
+          TextFormField(
+            controller: _c.openaiBaseUrlController,
+            autofocus: false,
+            maxLines: 10,
+            minLines: 1,
+            decoration: InputDecoration(
+              labelText: "消息",
+              hintText: "请输入消息",
+              suffixIcon: IconButton(
+                  onPressed: _c.saveOpenaiBaseUrl() ,
+                  icon: Icon(Icons.send)),
+              border: const OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(16))),
+            ),
+          )
         ],
       ),
     );
