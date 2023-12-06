@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.3+4
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -86,6 +86,10 @@ dependencies:
   package_info_plus: ^4.1.0
   image_gallery_saver: ^2.0.3
   image_picker: ^1.0.4
+  openai_dart_dio:
+    git:
+      url: https://github.com/wilinz/openai-dart-dio
+  fetch_client: ^1.0.2
 
 dev_dependencies:
   flutter_test:

@@ -11,6 +11,7 @@ import 'package:aimigo/data/network_io.dart'
 import 'package:aimigo/data/rawhttp.dart';
 import 'package:get/get.dart' as getx;
 import 'package:http_interceptor/http_interceptor.dart' as http_interceptor;
+import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -80,19 +81,21 @@ class AppNetwork {
   }
 
   static void proxy(Dio dio) {
-    if (!kReleaseMode &&
-        (getx.GetPlatform.isWindows ||
-            getx.GetPlatform.isMacOS ||
-            getx.GetPlatform.isAndroid)) {
-      (dio.httpClientAdapter as dynamic).onHttpClientCreate = (client) {
-        client.findProxy = (uri) {
-          // 这里设置代理地址和端口号
-          return "PROXY 192.168.1.5:18888";
-        };
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
+    // if (!kReleaseMode &&
+    //     (getx.GetPlatform.isWindows ||
+    //         getx.GetPlatform.isMacOS ||
+    //         getx.GetPlatform.isAndroid)) {
+    if (kIsWeb) return;
+    (dio.httpClientAdapter as dynamic).onHttpClientCreate = (client) {
+      client.findProxy = (uri) {
+        // final proxy = bool.hasEnvironment('PROXY_URL') ? String.fromEnvironment('PROXY_URL') : null;
+        // 这里设置代理地址和端口号
+        return "PROXY 127.0.0.1:10809";
       };
-    }
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
+    // }
   }
 
   /// 使用底层重定向
@@ -120,9 +123,17 @@ class AppNetwork {
     ]);
   }
 
+  late OpenAiClient openAiClient;
+
   _initOpenAi() {
-    OpenAI.baseUrl = baseUrl + "/openai";
-    OpenAI.apiKey = "";
+    final dio = Dio();
+    dio.httpClientAdapter = getHttpClientAdapter();
+    proxy(dio);
+
+    openAiClient = OpenAiClient(
+        apiKey: "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",
+        // baseUrl: baseUrl + "/openai",
+        dio: dio);
   }
 
   AppNetwork._create();

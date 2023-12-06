@@ -1,56 +1,23 @@
-import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
-import 'package:dart_extensions/dart_extensions.dart';
+import 'package:aimigo/ui/page/chat/chat_controller.dart';
+import 'package:aimigo/ui/page/chat/markdown_controller.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:aimigo/data/network.dart';
 import 'package:aimigo/ui/page/common.dart';
 import 'package:aimigo/ui/widget/code_wrapper.dart';
 import 'package:aimigo/ui/widget/markdown_block.dart';
 import 'package:aimigo/ui/widget/selection_transformer.dart';
 import 'package:get/get.dart';
 import 'package:markdown_widget/markdown_widget.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:openai_dart_dio/openai_dart_dio.dart';
 
-import '../../../data/tts/tts.dart';
 import '../../widget/latex.dart';
 
-class MyMarkdownController extends GetxController {
-  late OpenAIChatCompletionChoiceMessageModel message;
-  var isSourceMode = false.obs;
-
-  MyMarkdownController({required this.message});
-
-  Future<void> textToSpeech() async {
-    final supportDir = await getApplicationSupportDirectory();
-    final dir = Directory(join(supportDir.path, 'tts'));
-    await dir.create(recursive: true);
-
-    final file =
-        File(join(dir.path, DateTime.now().millisecond.toString() + ".mp3"));
-
-    final sink = file.openWrite();
-    final stream =
-        tts(message.content, language: "zh_CN", voiceName: "zh-CN-YunxiNeural");
-    stream.listen((bytes) {
-      sink.add(bytes);
-    }, onDone: () async {
-      sink.close();
-      final player = AudioPlayer();
-      player.play(DeviceFileSource(file.path));
-      player.onPlayerComplete.listen((event) {
-        file.delete();
-      });
-    });
-  }
-}
 
 class MyMarkdownWidget extends StatefulWidget {
-  final OpenAIChatCompletionChoiceMessageModel message;
+  final ChatMessage message;
 
   MyMarkdownWidget(this.message, {Key? key}) : super(key: key) {}
 
@@ -144,6 +111,8 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
       case ContextMenuButtonType.liveTextInput:
       case ContextMenuButtonType.custom:
         return e;
+      default:
+        return e;
     }
   }
 
@@ -173,6 +142,7 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('聊天'),
@@ -240,7 +210,7 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         textDirection:
-                            message.role == OpenAIChatMessageRole.user
+                            message.role == ChatMessageRole.user
                                 ? TextDirection.rtl
                                 : TextDirection.ltr,
                         children: [
@@ -326,115 +296,4 @@ class _ChatPageState extends State<ChatPage>  with AutomaticKeepAliveClientMixin
   @override
   bool get wantKeepAlive => true;
 
-}
-
-class ChatController extends GetxController {
-  final messages = RxList<OpenAIChatCompletionChoiceMessageModel>().obs;
-
-  final inputController = TextEditingController(text: "");
-  var inputNoBlank = false.obs;
-  ScrollController scrollController = ScrollController();
-
-  clearMessage() {
-    messages.value.clear();
-    final message0 = OpenAIChatCompletionChoiceMessageModel(
-        role: OpenAIChatMessageRole.system, content: "您好，有什么需要帮助的吗？");
-    messages.value.add(message0);
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    clearMessage();
-    inputController.addListener(() {
-      inputNoBlank.value = inputController.text.isNotBlank;
-    });
-  }
-
-  void _scrollToBottom() {
-    try {
-      scrollController.jumpTo(
-            scrollController.position.maxScrollExtent,
-            // duration: Duration(milliseconds: 10),
-            // curve: Curves.easeInOut,
-          );
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void sendMessages() async {
-    try {
-      //获取消息
-      final msg = inputController.text;
-      //清空输入
-      inputController.text = "";
-      //构建用户消息
-      final message0 = OpenAIChatCompletionChoiceMessageModel(
-          role: OpenAIChatMessageRole.user, content: msg);
-      //将消息加入消息列表
-      messages.value.add(message0);
-      //滚到列表底部
-      _scrollToBottom();
-
-      //调用 createStream
-      final client = await AppNetwork.getRawHttpClient();
-      Stream<OpenAIStreamChatCompletionModel> chatStream = OpenAI.instance.chat
-          .createStream(
-              model: "gpt-3.5-turbo-16k-0613",
-              messages: messages.value,
-              client: client);
-
-      //构建响应消息
-      final message = OpenAIChatCompletionChoiceMessageModel(
-          role: OpenAIChatMessageRole.assistant, content: "");
-      //将消息加入消息列表
-      messages.value.add(message);
-      //获取消息 index
-      final index = messages.value.indexOf(message);
-
-      //监听响应
-      chatStream.listen(
-          (streamChatCompletion) {
-            try {
-              //获取响应内容
-              final content = streamChatCompletion.choices.first.delta.content;
-              //获取旧消息
-              final old = messages.value[index];
-              //更新消息
-              messages.value[index] = OpenAIChatCompletionChoiceMessageModel(
-                  role: OpenAIChatMessageRole.assistant,
-                  //追加拼接内容
-                  content: old.content + (content ?? ""));
-              //滚到列表底部
-              _scrollToBottom();
-            } catch (e) {
-              print(e);
-            }
-          },
-          onDone: () {},
-          onError: (e, s) {
-            print(e);
-            print(s);
-          });
-
-      // final chat = await OpenAI.instance.chat.create(
-      //     model: "gpt-3.5-turbo-16k-0613",
-      //     messages: [
-      //       OpenAIChatCompletionChoiceMessageModel(
-      //         content: inputController.text,
-      //         role: OpenAIChatMessageRole.user,
-      //       )
-      //     ],
-      //     client: client);
-      // print(chat);
-      // 处理API响应并更新消息列表
-      // ...
-    } catch (error, st) {
-      print(error);
-      print(st);
-      // 处理错误
-      // ...
-    }
-  }
 }

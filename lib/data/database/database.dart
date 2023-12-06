@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:floor/floor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
@@ -30,7 +31,10 @@ Future<AppDatabase> getDatabase() async => appDatabase;
 
 late Database db;
 
-Future<void> initDatabase() async => appDatabase = await _getDatabase();
+Future<void> initDatabase() async {
+  if (kIsWeb) return ;
+  appDatabase = await _getDatabase();
+}
 
 
 Future<AppDatabase> _getDatabase() async {
