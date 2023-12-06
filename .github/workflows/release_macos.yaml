@@ -21,6 +21,9 @@ jobs:
           architecture: x64 # optional, x64 or arm64
       - run: flutter --version
 
+      - name: setup pod
+        run: pod repo update
+        
       - name: Build for macOS
         run: flutter build macos --release
 
