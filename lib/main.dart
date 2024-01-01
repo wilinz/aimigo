@@ -93,7 +93,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
     }
 
     return GetMaterialApp(
-      title: 'app_name'.tr,
+      title: 'Aimigo',
       translations: Messages(),
       defaultTransition: Transition.cupertino,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,

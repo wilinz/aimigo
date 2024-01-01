@@ -64,7 +64,7 @@ class AppNetwork {
     if (!kIsWeb) {
       dio.interceptors.add(CookieManager(cookieJar));
     } else {
-      dio.httpClientAdapter = getHttpClientAdapter(withCredentials: true);
+      dio.httpClientAdapter = await getHttpClientAdapter(withCredentials: true);
     }
 
     // proxy(dio);
@@ -132,10 +132,10 @@ class AppNetwork {
 
   OpenAiClient? openAiClient;
 
-  void setupOpenAi({required String apikey, String? baseUrl}) {
+  Future<void> setupOpenAi({required String apikey, String? baseUrl}) async {
     final dio = Dio();
     setDioLogger(dio);
-    dio.httpClientAdapter = getHttpClientAdapter();
+    dio.httpClientAdapter = await getHttpClientAdapter();
     proxy(dio);
 
     openAiClient = OpenAiClient(
@@ -144,12 +144,12 @@ class AppNetwork {
 
   static const String openAiBaseUrl = "https://api.openai.com/";
 
-  _initOpenAi() {
+  _initOpenAi() async {
     final storage = getStorage;
     final apikey = storage.read<String?>(AppSettings.openaiApiKey);
     if (apikey == null) return;
     final baseUrl = storage.read<String?>(AppSettings.openaiBaseUrl);
-    setupOpenAi(apikey: apikey, baseUrl: baseUrl);
+    await setupOpenAi(apikey: apikey, baseUrl: baseUrl);
     // final dio = Dio();
     // dio.httpClientAdapter = getHttpClientAdapter();
     // proxy(dio);
@@ -189,7 +189,7 @@ class AppNetwork {
       _instance = AppNetwork._create();
       _instance!.cookieJar = await getCookieJar();
       _instance!._initRawHttpClient();
-      _instance!._initOpenAi();
+      await _instance!._initOpenAi();
 
       _instance!._dio = await setupDio(Dio(), _instance!.cookieJar);
       _instance!._dio.setFollowRedirects(true);

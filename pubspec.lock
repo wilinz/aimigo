@@ -957,7 +957,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: fb6afd7b9557d67c91c133ae319efdb29060f172
+      resolved-ref: a1f5308217f9836b44eee6767acae4aec458e9ef
       url: "https://github.com/wilinz/markdown_widget.git"
     source: git
     version: "2.3.1"
@@ -1194,6 +1194,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.0.5"
+  proxy_manager:
+    dependency: "direct main"
+    description:
+      name: proxy_manager
+      sha256: "4cdb8853bcedc1a6879c6d940d624d740e1c76ee6b83377b13270f96a8415a37"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.3"
   pub_semver:
     dependency: transitive
     description:
