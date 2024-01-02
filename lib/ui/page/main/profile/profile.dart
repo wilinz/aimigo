@@ -132,12 +132,21 @@ class _ProfilePageState extends State<ProfilePage>
                   final appVersion = c.appVersion.value;
                   if (appVersion != null &&
                       appVersion.isHasNewVersion(packageInfo)) {
-                    return Text("版本：${packageInfo.version} -> ${appVersion.versionName}");
+                    return Text(
+                        "版本：${packageInfo.version} -> ${appVersion.versionName}");
                   }
                   return Text("版本：${packageInfo.version}");
                 }),
                 trailing: Icon(Icons.arrow_forward_ios_outlined),
-              )
+              ),
+              ListTile(
+                onTap: () {
+                  Get.toNamed(AppRoute.sponsorPage);
+                },
+                leading: Icon(Icons.thumb_up_alt_outlined),
+                title: Text("给开发者点赞！"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              ),
             ],
           ),
         ),

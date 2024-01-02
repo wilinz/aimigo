@@ -1,4 +1,5 @@
 import 'package:aimigo/ui/page/new_post/new_post_page.dart';
+import 'package:aimigo/ui/page/sponsor/sponsor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:aimigo/ui/page/ai_painting/sd_model/sd_model_detail_page.dart';
@@ -48,6 +49,8 @@ class AppRoute {
 
   static const String postPage = "/PostPage";
 
+  static const String sponsorPage = "/SponsorPage";
+
   // ///路由表配置
   // static Map<String, Widget Function(BuildContext context, dynamic arguments)>
   //     routes = {
@@ -77,6 +80,10 @@ class AppRoute {
     GetPage(
       name: loginPage,
       page: () => LoginPage(),
+    ),
+    GetPage(
+      name: sponsorPage,
+      page: () => SponsorPage(),
     ),
     GetPage(
       name: postPage,
