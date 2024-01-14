@@ -106,6 +106,14 @@ class _ProfilePageState extends State<ProfilePage>
                 trailing: Icon(Icons.arrow_forward_ios_outlined),
               ),
               ListTile(
+                onTap: () {
+                  Get.toNamed(AppRoute.dallEPage);
+                },
+                leading: Icon(Icons.draw_outlined),
+                title: Text("画图"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              ),
+              ListTile(
                 onTap: () {},
                 leading: Icon(Icons.person_outline),
                 title: Text("关于"),

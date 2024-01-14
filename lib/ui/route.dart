@@ -1,3 +1,4 @@
+import 'package:aimigo/ui/page/dalle/dalle.dart';
 import 'package:aimigo/ui/page/new_post/new_post_page.dart';
 import 'package:aimigo/ui/page/sponsor/sponsor.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,6 +52,8 @@ class AppRoute {
 
   static const String sponsorPage = "/SponsorPage";
 
+  static const String dallEPage = "/dallEPage";
+
   // ///路由表配置
   // static Map<String, Widget Function(BuildContext context, dynamic arguments)>
   //     routes = {
@@ -77,6 +80,10 @@ class AppRoute {
   // };
 
   static List<GetPage> routes = [
+    GetPage(
+      name: dallEPage,
+      page: () => DallEPage(),
+    ),
     GetPage(
       name: loginPage,
       page: () => LoginPage(),
