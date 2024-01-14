@@ -38,7 +38,7 @@ class DallEPage extends StatelessWidget {
                 },
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.fromLTRB(16,16,16,0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

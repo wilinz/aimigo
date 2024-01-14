@@ -90,8 +90,7 @@ class ChatController extends GetxController {
 
       if (images.isNotEmpty) {
         if (!chatModel.contains("vision")) {
-          Get.snackbar("失败", "选请择包含 \"vision\" 的模型");
-          return;
+          model.value = models.firstOrNullWhere((e) => e.id.contains("vision"));
         }
       }
       //获取消息
