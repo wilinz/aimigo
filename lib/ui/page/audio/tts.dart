@@ -1,19 +1,20 @@
-import 'package:aimigo/ui/page/dalle/dalle_ctrl.dart';
 import 'package:aimigo/ui/widget/context_menu_region.dart';
 import 'package:aimigo/ui/widget/slider_tile.dart';
 import 'package:aimigo/util/base64_data_url_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class DallEPage extends StatelessWidget {
-  const DallEPage({super.key});
+import 'tts_ctrl.dart';
+
+class TTSPage extends StatelessWidget {
+  const TTSPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(DallEController());
+    final c = Get.put(TTSController());
     return Scaffold(
       appBar: AppBar(
-        title: Text("文生图"),
+        title: Text("TTS"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -21,13 +22,13 @@ class DallEPage extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                controller: c.promptController,
+                controller: c.inputController,
                 autofocus: false,
                 maxLines: 10,
                 minLines: 1,
                 decoration: InputDecoration(
-                  labelText: "请输入描述",
-                  hintText: "请输入描述".tr,
+                  labelText: "请输入文本",
+                  hintText: "请输入文本".tr,
                   prefixIcon: Icon(Icons.draw_outlined),
                   // helperText: '用户名',
                   border: const OutlineInputBorder(
@@ -64,61 +65,17 @@ class DallEPage extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('质量:'),
+                    Text('发音人:'),
                     SizedBox(width: 8),
                     Obx(() => DropdownButton<String>(
-                          value: c.quality.value,
+                          value: c.voice.value,
                           onChanged: (String? newValue) {
-                            c.quality.value = newValue;
+                            c.voice.value = newValue;
                           },
-                          items: c.qualitys.map((String? quality) {
+                          items: c.voices.map((String? voice) {
                             return DropdownMenuItem<String>(
-                              value: quality,
-                              child: Text(quality ?? "默认"),
-                            );
-                          }).toList(),
-                        ))
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('图片大小:'),
-                    SizedBox(width: 8),
-                    Obx(() => DropdownButton<String>(
-                          value: c.size.value,
-                          onChanged: (String? newValue) {
-                            c.size.value = newValue!;
-                          },
-                          items: c.sizes.map((String item) {
-                            return DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(item),
-                            );
-                          }).toList(),
-                        ))
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('风格:'),
-                    SizedBox(width: 8),
-                    Obx(() => DropdownButton<String>(
-                          value: c.style.value,
-                          onChanged: (String? newValue) {
-                            c.style.value = newValue!;
-                          },
-                          items: c.styles.map((String item) {
-                            return DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(item),
+                              value: voice,
+                              child: Text(voice ?? "默认"),
                             );
                           }).toList(),
                         ))
@@ -127,16 +84,16 @@ class DallEPage extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Obx(() => SliderTile(
-                    title: Text('图像数量: ${c.number}'),
+                    title: Text('速度: ${c.speed}'),
                     slider: Slider(
-                      value: c.number.toDouble(),
+                      value: c.speed.toDouble(),
                       onChanged: (newValue) {
-                        c.number(newValue.toInt());
+                        c.speed(newValue);
                       },
-                      min: 1,
-                      max: 10,
-                      divisions: 10,
-                      label: '图像数量: ${c.number}',
+                      min: 0.25,
+                      max: 4.0,
+                      divisions: null,
+                      label: '速度: ${c.speed}',
                     ),
                   )),
               Padding(
@@ -158,7 +115,7 @@ class DallEPage extends StatelessWidget {
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Icon(Icons.sync),
                               ),
-                            Text(c.cancelToken.value == null ? "生成图片" : "取消生成"),
+                            Text(c.cancelToken.value == null ? "生成音频" : "取消生成"),
                           ],
                         ),
                       )),
@@ -202,7 +159,7 @@ class DallEPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(DallEController c, Offset offset, String imageUrl) {
+  Widget _buildContent(TTSController c, Offset offset, String imageUrl) {
     return AdaptiveTextSelectionToolbar.buttonItems(
         anchors: TextSelectionToolbarAnchors(
           primaryAnchor: offset,

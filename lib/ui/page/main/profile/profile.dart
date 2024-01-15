@@ -107,10 +107,26 @@ class _ProfilePageState extends State<ProfilePage>
               ),
               ListTile(
                 onTap: () {
-                  Get.toNamed(AppRoute.dallEPage);
+                  Get.toNamed(AppRoute.imagePage);
                 },
                 leading: Icon(Icons.draw_outlined),
                 title: Text("画图"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              ),
+              ListTile(
+                onTap: () {
+                  Get.toNamed(AppRoute.audioTTSPage);
+                },
+                leading: Icon(Icons.spatial_audio_off_outlined),
+                title: Text("TTS"),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
+              ),
+              ListTile(
+                onTap: () {
+                  Get.toNamed(AppRoute.transcriptionsPage);
+                },
+                leading: Icon(Icons.edit_outlined),
+                title: Text("语音转写"),
                 trailing: Icon(Icons.arrow_forward_ios_outlined),
               ),
               ListTile(

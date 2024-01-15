@@ -1,4 +1,6 @@
-import 'package:aimigo/ui/page/dalle/dalle.dart';
+import 'package:aimigo/ui/page/audio/transcriptions.dart';
+import 'package:aimigo/ui/page/audio/tts.dart';
+import 'package:aimigo/ui/page/image/dalle.dart';
 import 'package:aimigo/ui/page/new_post/new_post_page.dart';
 import 'package:aimigo/ui/page/sponsor/sponsor.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,7 +54,11 @@ class AppRoute {
 
   static const String sponsorPage = "/SponsorPage";
 
-  static const String dallEPage = "/dallEPage";
+  static const String imagePage = "/imageEPage";
+
+  static const String audioTTSPage = "/audioTTSPage";
+
+  static const String transcriptionsPage = "/transcriptionsPage";
 
   // ///路由表配置
   // static Map<String, Widget Function(BuildContext context, dynamic arguments)>
@@ -81,8 +87,16 @@ class AppRoute {
 
   static List<GetPage> routes = [
     GetPage(
-      name: dallEPage,
-      page: () => DallEPage(),
+      name: transcriptionsPage,
+      page: () => TranscriptionsPage(),
+    ),
+    GetPage(
+      name: audioTTSPage,
+      page: () => TTSPage(),
+    ),
+    GetPage(
+      name: imagePage,
+      page: () => ImagePage(),
     ),
     GetPage(
       name: loginPage,
