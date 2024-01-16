@@ -95,6 +95,9 @@ dependencies:
   flutter_svg_provider: ^1.0.7
   chunked_stream: ^1.4.2
   file_picker: ^6.1.1
+  record: ^5.0.4
+  fluttertoast: ^8.2.4
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:

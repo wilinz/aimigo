@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_linux
   flutter_localization
   proxy_manager
+  record_linux
   screen_retriever
   sqlite3_flutter_libs
   url_launcher_linux
