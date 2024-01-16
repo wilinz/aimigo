@@ -152,7 +152,6 @@ class TranscriptionsController extends GetxController {
     await Permission.microphone.onDeniedCallback(() {
       isRecording(false);
     }).onGrantedCallback(() async {
-      checkRecord();
       record?.stop();
       record?.dispose();
       record = AudioRecorder();
@@ -160,17 +159,10 @@ class TranscriptionsController extends GetxController {
       final dir = await getApplicationSupportDirectory();
       final path = join(dir.path, "speech_recognition",
           DateTime.timestamp().millisecondsSinceEpoch.toString() + ".wav");
-      await File(path).create(recursive: true);
+      final f = File(path);
+      await f.create(recursive: true);
       await record!.start(const RecordConfig(), path: path);
     }).request();
-  }
-
-  void checkRecord() {
-    if (isRecording.isFalse) {
-      record?.stop();
-      record?.dispose();
-      return;
-    }
   }
 
   Future<void> stopRecording() async {
@@ -178,14 +170,19 @@ class TranscriptionsController extends GetxController {
       isRecording(false);
       final stopRecordingTime = DateTime.timestamp().millisecondsSinceEpoch;
       if (stopRecordingTime - startRecordingTime < 300) {
+        Get.snackbar("失败", "录音时间短");
         final oldRecord = record;
+        record = null;
         Future.delayed(Duration(milliseconds: 500), () async {
-          final p = await oldRecord?.stop();
-          if (p != null) File(p).delete();
+          try {
+            final p = await oldRecord?.stop();
+            if (p != null) File(p).delete();
+          } catch (e) {
+            print(e);
+          }
           oldRecord?.dispose();
         });
-        Get.snackbar("失败", "录音时间短");
-        return;
+        throw Exception("The recording time is short");
       }
       final path = await record?.stop();
       if (path == null) {
@@ -198,6 +195,7 @@ class TranscriptionsController extends GetxController {
       print(e);
     } finally {
       record?.dispose();
+      record = null;
     }
   }
 }
