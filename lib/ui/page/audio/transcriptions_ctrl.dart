@@ -184,6 +184,8 @@ class TranscriptionsController extends GetxController {
           if (p != null) File(p).delete();
           oldRecord?.dispose();
         });
+        Get.snackbar("失败", "录音时间短");
+        return;
       }
       final path = await record?.stop();
       if (path == null) {
