@@ -161,7 +161,7 @@ class TranscriptionsController extends GetxController {
           DateTime.timestamp().millisecondsSinceEpoch.toString() + ".wav");
       final f = File(path);
       await f.create(recursive: true);
-      await record!.start(const RecordConfig(), path: path);
+      await record!.start(const RecordConfig(encoder:AudioEncoder.wav), path: path);
     }).request();
   }
 

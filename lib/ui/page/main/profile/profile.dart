@@ -46,134 +46,129 @@ class _ProfilePageState extends State<ProfilePage>
           ),
         ],
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 400),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(12, 12, 12, 0),
-                child: Card(
-                  child: InkWell(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(AppRoute.loginPage, arguments: true);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Image(
-                            image: AssetImage("assets/images/logo.png"),
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.contain,
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StreamBuilder(
-                                  stream: c.getActiveUserStream(),
-                                  builder: (context, item) {
-                                    final user = item.data;
-                                    return Text(
-                                      user == null ? "请登录" : user.username,
-                                      style: Get.theme.textTheme.titleMedium,
-                                    );
-                                  }),
-                              // SizedBox(height: 4),
-                              // Text("info"),
-                            ],
-                          )
-                        ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: Card(
+              child: InkWell(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(AppRoute.loginPage, arguments: true);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Image(
+                        image: AssetImage("assets/images/logo.png"),
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.contain,
                       ),
-                    ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StreamBuilder(
+                              stream: c.getActiveUserStream(),
+                              builder: (context, item) {
+                                final user = item.data;
+                                return Text(
+                                  user == null ? "请登录" : user.username,
+                                  style: Get.theme.textTheme.titleMedium,
+                                );
+                              }),
+                          // SizedBox(height: 4),
+                          // Text("info"),
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),
-              SizedBox(height: 8),
-              ListTile(
-                onTap: () {
-                  logout(c);
-                },
-                leading: Icon(Icons.logout_outlined),
-                title: Text("退出登录"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () {
-                  Get.toNamed(AppRoute.imagePage);
-                },
-                leading: Icon(Icons.draw_outlined),
-                title: Text("画图"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () {
-                  Get.toNamed(AppRoute.audioTTSPage);
-                },
-                leading: Icon(Icons.spatial_audio_off_outlined),
-                title: Text("TTS"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () {
-                  Get.toNamed(AppRoute.transcriptionsPage);
-                },
-                leading: Icon(Icons.edit_outlined),
-                title: Text("语音转写"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () {},
-                leading: Icon(Icons.person_outline),
-                title: Text("关于"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () async {
-                  if (kIsWeb) return;
-                  await c.checkUpdate();
-                  final appVersion = c.appVersion.value;
-                  if (appVersion != null &&
-                      appVersion.isHasNewVersion(packageInfo)) {
-                    showDialog(
-                        context: Get.context!,
-                        barrierDismissible: !appVersion.isForce,
-                        builder: (context) =>
-                            UpdateDialog(appVersion: appVersion));
-                  } else {
-                    Get.snackbar("版本信息", "已经最新版本");
-                  }
-                },
-                leading: Icon(Icons.info_outline),
-                title: Obx(() {
-                  final appVersion = c.appVersion.value;
-                  if (appVersion != null &&
-                      appVersion.isHasNewVersion(packageInfo)) {
-                    return Text(
-                        "版本：${packageInfo.version} -> ${appVersion.versionName}");
-                  }
-                  return Text("版本：${packageInfo.version}");
-                }),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-              ListTile(
-                onTap: () {
-                  Get.toNamed(AppRoute.sponsorPage);
-                },
-                leading: Icon(Icons.thumb_up_alt_outlined),
-                title: Text("给开发者点赞！"),
-                trailing: Icon(Icons.arrow_forward_ios_outlined),
-              ),
-            ],
+            ),
           ),
-        ),
+          SizedBox(height: 8),
+          ListTile(
+            onTap: () {
+              logout(c);
+            },
+            leading: Icon(Icons.logout_outlined),
+            title: Text("退出登录"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () {
+              Get.toNamed(AppRoute.imagePage);
+            },
+            leading: Icon(Icons.draw_outlined),
+            title: Text("画图"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () {
+              Get.toNamed(AppRoute.audioTTSPage);
+            },
+            leading: Icon(Icons.spatial_audio_off_outlined),
+            title: Text("TTS"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () {
+              Get.toNamed(AppRoute.transcriptionsPage);
+            },
+            leading: Icon(Icons.edit_outlined),
+            title: Text("语音转写"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () {},
+            leading: Icon(Icons.person_outline),
+            title: Text("关于"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () async {
+              if (kIsWeb) return;
+              await c.checkUpdate();
+              final appVersion = c.appVersion.value;
+              if (appVersion != null &&
+                  appVersion.isHasNewVersion(packageInfo)) {
+                showDialog(
+                    context: Get.context!,
+                    barrierDismissible: !appVersion.isForce,
+                    builder: (context) =>
+                        UpdateDialog(appVersion: appVersion));
+              } else {
+                Get.snackbar("版本信息", "已经最新版本");
+              }
+            },
+            leading: Icon(Icons.info_outline),
+            title: Obx(() {
+              final appVersion = c.appVersion.value;
+              if (appVersion != null &&
+                  appVersion.isHasNewVersion(packageInfo)) {
+                return Text(
+                    "版本：${packageInfo.version} -> ${appVersion.versionName}");
+              }
+              return Text("版本：${packageInfo.version}");
+            }),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+          ListTile(
+            onTap: () {
+              Get.toNamed(AppRoute.sponsorPage);
+            },
+            leading: Icon(Icons.thumb_up_alt_outlined),
+            title: Text("给开发者点赞！"),
+            trailing: Icon(Icons.arrow_forward_ios_outlined),
+          ),
+        ],
       ),
     );
   }
