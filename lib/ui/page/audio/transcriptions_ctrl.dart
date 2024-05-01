@@ -7,6 +7,7 @@ import 'package:chunked_stream/chunked_stream.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -17,6 +18,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
+import 'package:path/path.dart' as path;
 
 class TranscriptionsController extends GetxController {
   Rx<CancelToken?> cancelToken = Rx<CancelToken?>(null);
@@ -64,6 +66,29 @@ class TranscriptionsController extends GetxController {
     super.onInit();
     model(models.first);
     response_format(response_formats.first);
+  }
+
+  Future<void> saveOutputToFile() async {
+    try {
+      if (output.value.isNotEmpty) {
+        final fileName = file.value != null
+            ? 'transcriptions-' + path.basenameWithoutExtension(file.value!.path)
+            : 'transcriptions-${DateTime.timestamp().millisecondsSinceEpoch}.txt'; // You can change the file name and extension as needed
+        final data = utf8.encode(output.value);
+
+        final savePath = await FileSaver.instance.saveFile(
+            bytes: data,
+            mimeType: MimeType.text,
+            ext: response_format.value ?? 'json',
+            name: fileName);
+        Get.snackbar("Success", "Output saved to file: $savePath");
+      } else {
+        Get.snackbar("Error", "Output is empty, cannot save to file");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to save output to file");
+      print(e);
+    }
   }
 
   Future<void> transcriptions() async {
@@ -161,7 +186,8 @@ class TranscriptionsController extends GetxController {
           DateTime.timestamp().millisecondsSinceEpoch.toString() + ".wav");
       final f = File(path);
       await f.create(recursive: true);
-      await record!.start(const RecordConfig(encoder:AudioEncoder.wav), path: path);
+      await record!
+          .start(const RecordConfig(encoder: AudioEncoder.wav), path: path);
     }).request();
   }
 

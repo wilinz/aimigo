@@ -2,7 +2,9 @@ import 'package:aimigo/ui/page/audio/transcriptions_ctrl.dart';
 import 'package:aimigo/ui/widget/context_menu_region.dart';
 import 'package:aimigo/ui/widget/slider_tile.dart';
 import 'package:aimigo/util/base64_data_url_image_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import 'tts_ctrl.dart';
@@ -37,7 +39,8 @@ class TranscriptionsPage extends StatelessWidget {
                         prefixIcon: Icon(Icons.draw_outlined),
                         // helperText: '用户名',
                         border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(16))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16))),
                       ),
                       validator: (v) {
                         return v!.trim().length > 0 ? null : "输入为空";
@@ -57,7 +60,8 @@ class TranscriptionsPage extends StatelessWidget {
                         prefixIcon: Icon(Icons.draw_outlined),
                         // helperText: '用户名',
                         border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(16))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16))),
                       ),
                       validator: (v) {
                         return v!.trim().length > 0 ? null : "输入为空";
@@ -67,16 +71,22 @@ class TranscriptionsPage extends StatelessWidget {
                     Obx(() => Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            TextButton(
-                                onPressed: c.pickFile,
-                                child: Text(
-                                    "选择音频文件: 支持的格式：${c.allowedExtensions.join(", ")}")),
+                            Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 8),
+                              child: ElevatedButton(
+                                  onPressed: c.pickFile,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("选择音频文件"))),
+                            ),
+                            Text("支持的格式：${c.allowedExtensions.join(", ")}"),
                             if (c.file.value != null)
                               Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 16.0),
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Obx(() => SelectableText(
-                                      c.file.value?.path ?? "",
+                                      "已选择：" + (c.file.value?.path ?? ""),
                                     )),
                               )
                           ],
@@ -155,10 +165,13 @@ class TranscriptionsPage extends StatelessWidget {
                                 children: [
                                   if (c.cancelToken.value != null)
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
                                       child: Icon(Icons.sync),
                                     ),
-                                  Text(c.cancelToken.value == null ? "识别" : "取消识别"),
+                                  Text(c.cancelToken.value == null
+                                      ? "识别"
+                                      : "取消识别"),
                                 ],
                               ),
                             )),
@@ -180,14 +193,26 @@ class TranscriptionsPage extends StatelessWidget {
                                 children: [
                                   if (c.cancelToken2.value != null)
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
                                       child: Icon(Icons.sync),
                                     ),
-                                  Text(
-                                      c.cancelToken2.value == null ? "翻译" : "取消翻译"),
+                                  Text(c.cancelToken2.value == null
+                                      ? "翻译"
+                                      : "取消翻译"),
                                 ],
                               ),
                             )),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: c.saveOutputToFile,
+                          child: Text("保存到文件"),
+                        ),
                       ),
                     ),
                     Padding(
@@ -216,7 +241,9 @@ class TranscriptionsPage extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: Icon(
-                                    c.isRecording.value ? Icons.stop : Icons.mic,
+                                    c.isRecording.value
+                                        ? Icons.stop
+                                        : Icons.mic,
                                     size: 56,
                                     color: Colors.white,
                                   ),
