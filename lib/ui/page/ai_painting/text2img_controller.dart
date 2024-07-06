@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dart_extensions/dart_extensions.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/src/cancel_token.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +12,8 @@ import 'package:aimigo/data/model/stablediffusion/sdcommunity/text2img_response/
 import 'package:aimigo/data/network.dart';
 import 'package:aimigo/util/bool.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 
 /// | Parameter               | Description                                                  |
 /// | ----------------------- | ------------------------------------------------------------ |
@@ -147,17 +150,40 @@ class Text2ImgPageController extends GetxController {
   }
 
   saveNetworkImage(String url) async {
-    var response = await Dio()
-        .get(url, options: Options(responseType: ResponseType.bytes));
-    final result = await ImageGallerySaver.saveImage(
+    // Used libs follows:
+    //   device_info_plus: ^10.1.0
+    //   saver_gallery: ^3.0.5
+    if (GetPlatform.isDesktop) {
+      Get.snackbar("失败", "暂不支持非移动端");
+      return;
+    }
+    bool isGranted;
+    if (Platform.isAndroid) {
+      final sdkInt = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+      isGranted = await (sdkInt > 33 ? Permission.photos : Permission.storage)
+          .request()
+          .isGranted;
+    } else {
+      isGranted = await Permission.photosAddOnly.request().isGranted;
+    }
+
+    if (isGranted) {
+      String picturesPath =
+          DateTime.timestamp().millisecondsSinceEpoch.toString() + ".jpg";
+      debugPrint(picturesPath);
+      var response = await Dio()
+          .get(url, options: Options(responseType: ResponseType.bytes));
+      final result = await SaverGallery.saveImage(
         Uint8List.fromList(response.data),
-        quality: 60,
-        name: "hello");
-    // {filePath: content://media/external/images/media/1000033022, errorMessage: null, isSuccess: true}
-    if (result['isSuccess'] == true) {
+        quality: 100,
+        name: picturesPath,
+        androidRelativePath: "Pictures/Aimigo",
+        androidExistNotSave: false,
+      );
+      debugPrint(result.toString());
       Get.snackbar("成功", "保存成功");
     } else {
-      Get.snackbar("失败", result['errorMessage']);
+      Get.snackbar("失败", "请允许权限");
     }
   }
 }

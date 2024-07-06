@@ -49,5 +49,9 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
     <string>Speech to text</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>photo</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>photo</string>
 </dict>
 </plist>

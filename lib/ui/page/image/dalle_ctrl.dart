@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:aimigo/data/network.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 
 class DallEController extends GetxController {
   Rx<CancelToken?> cancelToken = Rx<CancelToken?>(null);
@@ -74,13 +77,35 @@ class DallEController extends GetxController {
   }
 
   Future<void> saveNetworkImage(String imageUrl) async {
-    final result = await ImageGallerySaver.saveImage(base64Decode(imageUrl),
-        quality: 60, name: "hello");
-    // {filePath: content://media/external/images/media/1000033022, errorMessage: null, isSuccess: true}
-    if (result['isSuccess'] == true) {
+    if (GetPlatform.isDesktop) {
+      Get.snackbar("失败", "暂不支持非移动端");
+      return;
+    }
+    bool isGranted;
+    if (Platform.isAndroid) {
+      final sdkInt = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+      isGranted = await (sdkInt > 33 ? Permission.photos : Permission.storage)
+          .request()
+          .isGranted;
+    } else {
+      isGranted = await Permission.photosAddOnly.request().isGranted;
+    }
+
+    if (isGranted) {
+      String picturesPath =
+          DateTime.timestamp().millisecondsSinceEpoch.toString() + ".jpg";
+      debugPrint(picturesPath);
+      final result = await SaverGallery.saveImage(
+        Uint8List.fromList(base64Decode(imageUrl)),
+        quality: 100,
+        name: picturesPath,
+        androidRelativePath: "Pictures/Aimigo",
+        androidExistNotSave: false,
+      );
+      debugPrint(result.toString());
       Get.snackbar("成功", "保存成功");
     } else {
-      Get.snackbar("失败", result['errorMessage']);
+      Get.snackbar("失败", "请允许权限");
     }
   }
 }

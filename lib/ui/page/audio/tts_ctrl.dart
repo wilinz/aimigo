@@ -6,7 +6,6 @@ import 'package:chunked_stream/chunked_stream.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 class TTSController extends GetxController {

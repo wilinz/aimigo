@@ -10,7 +10,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:kt_dart/kt.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:dio/dio.dart' as dio;
