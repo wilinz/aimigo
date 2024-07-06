@@ -1,5 +1,7 @@
 # aimigo 一个 ChatGpt App
 
+下载地址：[https://github.com/wilinz/aimigo/actions](https://github.com/wilinz/aimigo/actions)
+
 ## 下面是一些常用命令
 
 Flutter 生成代码
