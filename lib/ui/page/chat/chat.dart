@@ -334,6 +334,7 @@ class _ChatPageState extends State<ChatPage>
                                 autofocus: false,
                                 maxLines: 10,
                                 minLines: 1,
+                                onTapOutside: (event) => FocusScope.of(context).unfocus(),
                                 decoration: InputDecoration(
                                   labelText: "消息",
                                   hintText: "请输入消息",

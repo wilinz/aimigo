@@ -89,10 +89,12 @@ class ChatController extends GetxController {
       }
 
       if (images.isNotEmpty) {
-        if (!chatModel.contains("vision")) {
-          model.value = models.firstOrNullWhere((e) => e.id.contains("vision"));
+        if (chatModel.contains("gpt-3.5")) {
+          Get.snackbar("失败", "请切换更高级的支持图片的模型");
+          return;
         }
       }
+
       //获取消息
       final msg = inputController.text;
       //清空输入

@@ -23,6 +23,7 @@ class _SDModelPageState extends State<SDModelPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(title: Text("模型")),
       body: RefreshIndicator(

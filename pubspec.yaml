@@ -56,17 +56,15 @@ dependencies:
   url_launcher: ^6.1.10
   connectivity_plus: ^4.0.1
   rxdart: ^0.27.7
-  dart_extensions:
-    git:
-      url: https://github.com/wilinz/dart_extensions.git
+  dart_extensions: ^2.2.4
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
       ref: 6c66ad23ee79749f30a8eece542cf54eaf157ed8
-  intl: ^0.18.1
+  intl: ^0.19.0
   qr_flutter: ^4.1.0
-  get: ^4.6.5
+  get: ^4.6.6
   get_storage: ^2.1.1
   dart_openai: ^4.0.0
   http_interceptor:
@@ -76,7 +74,7 @@ dependencies:
   markdown_widget: # ^2.2.0
     git:
       url: https://github.com/wilinz/markdown_widget.git
-  uuid: ^3.0.7
+  uuid: ^4.4.0
   audioplayers: ^5.2.1
   xml: ^6.3.0
   quiver: ^3.2.1
@@ -104,7 +102,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  get_cli: ^1.8.1
+  get_cli:
+    git:
+      url: https://github.com/jonataslaw/get_cli.git
   flutter_lints: ^2.0.0
   build_runner: ^2.3.3
   json5_model:

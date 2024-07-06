@@ -30,15 +30,15 @@ class AppRoute {
 
   static const String loginPage = "/loginPage";
 
+  static const String registerPage = "/registerPage";
+
+  static const String resetPasswordPage = "/ResetPasswordPage";
+
   static const String splashPage = "/";
 
   static const String mainPage = "/mainPage";
 
-  static const String registerPage = "/registerPage";
-
   static const String settingsPage = "/SettingsPage";
-
-  static const String resetPasswordPage = "/ResetPasswordPage";
 
   static const String chatPage = "/ChatPage";
 
