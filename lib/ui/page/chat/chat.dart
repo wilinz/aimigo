@@ -42,8 +42,8 @@ class _MyMarkdownWidgetState extends State<MyMarkdownWidget> {
     final config = Get.isDarkMode
         ? MarkdownConfig.darkConfig
         : MarkdownConfig.defaultConfig;
-    final codeWrapper =
-        (child, text) => CodeWrapperWidget(child: child, text: text);
+    final codeWrapper = (Widget child, String code, String language) =>
+        CodeWrapperWidget(child: child, text: code);
 
     return Obx(() {
       String? data = c.message.content is String?
@@ -166,9 +166,8 @@ class _ChatPageState extends State<ChatPage>
                                 child: Text(
                                   e.id,
                                   style: TextStyle(
-                                      color: c.model == e
-                                          ? Colors.green
-                                          : null),
+                                      color:
+                                          c.model == e ? Colors.green : null),
                                 ),
                               ))
                           .toList(),
@@ -334,7 +333,8 @@ class _ChatPageState extends State<ChatPage>
                                 autofocus: false,
                                 maxLines: 10,
                                 minLines: 1,
-                                onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                                onTapOutside: (event) =>
+                                    FocusScope.of(context).unfocus(),
                                 decoration: InputDecoration(
                                   labelText: "消息",
                                   hintText: "请输入消息",

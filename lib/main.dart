@@ -137,7 +137,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
     // do something
   }
 
-  StreamSubscription<ConnectivityResult>? subscription;
+  StreamSubscription<List<ConnectivityResult>>? subscription;
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
     super.initState();
     subscription = Connectivity()
         .onConnectivityChanged
-        .listen((ConnectivityResult result) {});
+        .listen((List<ConnectivityResult> result) {});
   }
 
   @override

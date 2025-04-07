@@ -176,9 +176,9 @@ class Text2ImgPageController extends GetxController {
       final result = await SaverGallery.saveImage(
         Uint8List.fromList(response.data),
         quality: 100,
-        name: picturesPath,
+        fileName: picturesPath,
         androidRelativePath: "Pictures/Aimigo",
-        androidExistNotSave: false,
+        skipIfExists: false,
       );
       debugPrint(result.toString());
       Get.snackbar("成功", "保存成功");

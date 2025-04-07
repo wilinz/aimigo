@@ -1,5 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:kt_dart/standard.dart';
 
 typedef SelectionTransform = String Function(Iterable<String>);
 
@@ -227,6 +228,8 @@ class SeparatedSelectionContainerDelegate extends MultiSelectableSelectionContai
         _hasReceivedStartEvent.add(selectable);
         _hasReceivedEndEvent.add(selectable);
         ensureChildUpdated(selectable);
+      default:
+        throw NotImplementedException("SelectionTransformer dispatchSelectionEventToChild Not Implemented: ${event.type}");
     }
     return super.dispatchSelectionEventToChild(selectable, event);
   }

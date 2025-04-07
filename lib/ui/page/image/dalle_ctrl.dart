@@ -98,9 +98,9 @@ class DallEController extends GetxController {
       final result = await SaverGallery.saveImage(
         Uint8List.fromList(base64Decode(imageUrl)),
         quality: 100,
-        name: picturesPath,
+        fileName: picturesPath,
         androidRelativePath: "Pictures/Aimigo",
-        androidExistNotSave: false,
+        skipIfExists: false,
       );
       debugPrint(result.toString());
       Get.snackbar("成功", "保存成功");
