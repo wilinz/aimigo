@@ -46,7 +46,7 @@ jobs:
           cd ../../../../
 
       - name: Upload to artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: aimigo_windows.zip
           path: build/windows/x64/runner/aimigo_windows.zip
