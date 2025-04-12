@@ -43,7 +43,7 @@ class TranscriptionsController extends GetxController {
 
   final output = "".obs;
 
-  final models = <String>["whisper-1"];
+  final models = <String>['gpt-4o-transcribe', 'gpt-4o-mini-transcribe', 'whisper-1'];
   final response_formats = <String>[
     "json",
     "text",
@@ -64,7 +64,7 @@ class TranscriptionsController extends GetxController {
   void onInit() {
     super.onInit();
     model(models.first);
-    response_format(response_formats.first);
+    response_format(response_formats[1]);
   }
 
   Future<void> saveOutputToFile() async {
