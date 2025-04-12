@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:aimigo/data/network.dart';
@@ -52,7 +53,7 @@ class TTSController extends GetxController {
 
       final player = AudioPlayer();
       final bytes = await readByteStream(resp);
-      player.play(BytesSource(bytes));
+      player.play(BytesSource(bytes, mimeType: "audio/mp3"));
     } catch (e) {
       Get.snackbar("失败", "出错了");
       print(e);
