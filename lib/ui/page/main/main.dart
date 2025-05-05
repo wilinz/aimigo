@@ -29,53 +29,50 @@ class _MainPageState extends State<_MainPage> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 500),
-        child: Scaffold(
-            body: PageView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [HomePage(),/* SDModelPage(),*/ ChatPage(), ProfilePage()],
-              onPageChanged: (index) {
-                setState(() {
-                  selected = index;
-                });
+      child: Scaffold(
+          body: PageView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [HomePage(),/* SDModelPage(),*/ ChatPage(), ProfilePage()],
+            onPageChanged: (index) {
+              setState(() {
+                selected = index;
+              });
+            },
+            controller: pageController,
+          ),
+          bottomNavigationBar: NavigationBar(
+              destinations: [
+                NavigationDestination(
+                  tooltip: 'home_page'.tr,
+                  icon: Icon(Icons.home_outlined),
+                  label: 'home_page'.tr,
+                  selectedIcon: Icon(Icons.home),
+                ),
+                // NavigationDestination(
+                //   tooltip: 'Ai绘图',
+                //   icon: Icon(Icons.brush_outlined),
+                //   label: 'Ai绘图',
+                //   selectedIcon: Icon(Icons.brush),
+                // ),
+                NavigationDestination(
+                  tooltip: 'Ai聊天',
+                  icon: Icon(Icons.chat_outlined),
+                  label: 'Ai聊天',
+                  selectedIcon: Icon(Icons.chat),
+                ),
+                NavigationDestination(
+                  tooltip: 'my'.tr,
+                  icon: Icon(Icons.person_outlined),
+                  label: 'my'.tr,
+                  selectedIcon: Icon(Icons.person),
+                )
+              ],
+              onDestinationSelected: (index) {
+                // pageController.animateToPage(index,
+                //     duration: Duration(milliseconds: 200), curve: Curves.linear);
+                pageController.jumpToPage(index);
               },
-              controller: pageController,
-            ),
-            bottomNavigationBar: NavigationBar(
-                destinations: [
-                  NavigationDestination(
-                    tooltip: 'home_page'.tr,
-                    icon: Icon(Icons.home_outlined),
-                    label: 'home_page'.tr,
-                    selectedIcon: Icon(Icons.home),
-                  ),
-                  // NavigationDestination(
-                  //   tooltip: 'Ai绘图',
-                  //   icon: Icon(Icons.brush_outlined),
-                  //   label: 'Ai绘图',
-                  //   selectedIcon: Icon(Icons.brush),
-                  // ),
-                  NavigationDestination(
-                    tooltip: 'Ai聊天',
-                    icon: Icon(Icons.chat_outlined),
-                    label: 'Ai聊天',
-                    selectedIcon: Icon(Icons.chat),
-                  ),
-                  NavigationDestination(
-                    tooltip: 'my'.tr,
-                    icon: Icon(Icons.person_outlined),
-                    label: 'my'.tr,
-                    selectedIcon: Icon(Icons.person),
-                  )
-                ],
-                onDestinationSelected: (index) {
-                  // pageController.animateToPage(index,
-                  //     duration: Duration(milliseconds: 200), curve: Curves.linear);
-                  pageController.jumpToPage(index);
-                },
-                selectedIndex: selected)),
-      ),
+              selectedIndex: selected)),
     );
   }
 }
